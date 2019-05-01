@@ -23,6 +23,12 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
         // debug printje
         print(commitHash)
+
+        openshift.withCluster() {
+            openshift.withProject() {
+                echo "Using project: ${openshift.project()}"
+            }
+        }
     }
 
     stage('print out ENV') {
@@ -32,6 +38,12 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
     stage('Gradle check') {
         sh "gradle -v"
+
+    }
+
+    node('maven') {
+
+
     }
 }
 
