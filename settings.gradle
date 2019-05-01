@@ -12,4 +12,7 @@ pluginManagement {
 
 
 
-rootProject.name = 'hello-world'
+rootProject.name = 'APP_NAME'
+
+include 'app-front'
+include 'app-main'
