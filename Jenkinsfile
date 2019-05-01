@@ -55,16 +55,22 @@ node('maven') {
             }
 
 
-            stage('APP Main config') {
+            stage('APP config') {
                 sh "oc apply -f is-openjdk18-openshift.yaml "
                 sh "oc apply -f is-app-main.yaml"
                 sh "oc apply -f is-app-front.yaml"
 
+                sh "oc apply -f svc-app-main.yaml"
+                sh "oc apply -f svc-app-front.yaml"
+
                 sh "oc apply -f bc-app-main.yaml"
                 sh "oc apply -f bc-app-front.yaml"
 
-                sh "oc apply -f svc-app-main.yaml"
-                sh "oc apply -f svc-app-front.yaml"
+                sh "oc apply -f route-app-main.yaml"
+                sh "oc apply -f route-app-front.yaml"
+
+                sh "oc apply -f dc-app-main.yaml"
+                sh "oc apply -f dc-app-front.yaml"
             }
 
 
@@ -81,6 +87,7 @@ node('maven') {
 
 
             newman = load 'pipeline/newman.groovy'
+
         }
 
     }

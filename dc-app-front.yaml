@@ -31,6 +31,9 @@ spec:
         deploymentconfig: app-front
     spec:
       containers:
+      - env:
+        - name: SCRIPT_DEBUG
+          value: 'true'
       - image: docker-registry.default.svc:5000/huub-freubel/app-front:latest
         imagePullPolicy: Always
         name: app-front
