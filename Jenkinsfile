@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 
-node('jenkins-agent-gradle') {
+node('gradle') {
 
 env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
 //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
