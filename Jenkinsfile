@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 
-node('gradle') {
+node('maven') {
 
 env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
 //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
