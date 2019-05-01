@@ -29,5 +29,9 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
         echo "Printing environment"
         sh "env"
     }
+
+    stage('Gradle check') {
+        sh "gradle -v"
+    }
 }
 
