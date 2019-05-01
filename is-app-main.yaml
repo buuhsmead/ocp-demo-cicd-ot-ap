@@ -1,0 +1,10 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    build: app-main
+  name: app-main
+  selfLink: /apis/image.openshift.io/v1/namespaces/huub-freubel/imagestreams/app-main
+spec:
+  lookupPolicy:
+    local: false
