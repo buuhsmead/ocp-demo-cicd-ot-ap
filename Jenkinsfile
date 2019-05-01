@@ -12,8 +12,16 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
 
 def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
-node {
-    echo "Printing environment"
-    sh "env"
+node('maven') {
+
+    stage('Checkout from SCM') {
+        // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
+        scm checkout
+    }
+
+    stage('print out ENV') {
+        echo "Printing environment"
+        sh "env"
+    }
 }
 
