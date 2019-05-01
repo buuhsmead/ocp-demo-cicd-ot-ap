@@ -18,7 +18,7 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
     def gradleCmd = 'gradle -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false ' // --debug
 
 
-    newman = load 'pipeline/newman.groovy'
+
 
 
     stage('Checkout from SCM') {
@@ -66,6 +66,8 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
             sh "${gradleCmd} bootJar"
         }
     }
+
+    newman = load 'pipeline/newman.groovy'
 
 }
 
