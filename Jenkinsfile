@@ -19,7 +19,10 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
     stage('Checkout from SCM') {
         // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
-        checkout
+        def commitHash = checkout(scm).GIT_COMMIT
+
+        // debug printje
+        print(commitHash)
     }
 
     stage('print out ENV') {
