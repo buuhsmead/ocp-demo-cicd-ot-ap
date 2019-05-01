@@ -1,0 +1,15 @@
+
+
+pluginManagement {
+    repositories {
+        maven {
+            url 'http://nexus3-huub-shared.apps.cp.donna.ns.nl/repository/maven-public/'
+        }
+    }
+}
+
+
+
+
+
+rootProject.name = 'hello-world'
