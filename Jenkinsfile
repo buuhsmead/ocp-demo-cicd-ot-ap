@@ -56,13 +56,13 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
 
 
     stage('APP Main Build') {
-        cdir('app-main') {
+        dir('app-main') {
             sh "${gradleCmd} bootJar"
         }
     }
 
     stage('APP Front Build') {
-        cdir('app-front') {
+        dir('app-front') {
             sh "${gradleCmd} bootJar"
         }
     }
