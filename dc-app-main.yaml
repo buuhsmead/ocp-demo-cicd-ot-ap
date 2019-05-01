@@ -34,6 +34,9 @@ spec:
         deploymentconfig: app-main
     spec:
       containers:
+      - env:
+        - name: SCRIPT_DEBUG
+          value: 'true'
       - image: docker-registry.default.svc:5000/huub-freubel/app-main:latest
         imagePullPolicy: Always
         name: app-main
