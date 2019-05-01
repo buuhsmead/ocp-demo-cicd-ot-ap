@@ -13,7 +13,10 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
 //    env.STAGE2 = "${projectBase}-stage"
 //    env.STAGE3 = "${projectBase}-prod"
 
-def scmAccount = "${env.NAMESPACE}-scm-checkout"
+    def scmAccount = "${env.NAMESPACE}-scm-checkout"
+
+    def gradleCmd = 'gradle -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false ' // --debug
+
 
     newman = load 'pipeline/newman.groovy'
 
@@ -52,9 +55,17 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
     }
 
 
+    stage('APP Main Build') {
+        cdir('app-main') {
+            sh "${gradleCmd} bootJar"
+        }
+    }
 
-
-
+    stage('APP Front Build') {
+        cdir('app-front') {
+            sh "${gradleCmd} bootJar"
+        }
+    }
 
 }
 
