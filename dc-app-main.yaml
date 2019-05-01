@@ -36,8 +36,8 @@ spec:
       containers:
       - env:
         - name: SCRIPT_DEBUG
-          value: 'true'
-      - image: docker-registry.default.svc:5000/huub-freubel/app-main:latest
+          value: "true"
+        image: docker-registry.default.svc:5000/huub-freubel/app-main:latest
         imagePullPolicy: Always
         name: app-main
         ports:
@@ -68,6 +68,4 @@ spec:
       from:
         kind: ImageStreamTag
         name: app-main:latest
-        namespace: huub-freubel
     type: ImageChange
-

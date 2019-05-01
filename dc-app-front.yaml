@@ -1,6 +1,9 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: null
   generation: 1
   labels:
     app: app-front
@@ -31,16 +34,13 @@ spec:
         deploymentconfig: app-front
     spec:
       containers:
-      - env:
-        - name: SCRIPT_DEBUG
-          value: 'true'
-      - image: docker-registry.default.svc:5000/huub-freubel/app-front:latest
+      - image: app-front:latest
         imagePullPolicy: Always
         name: app-front
         ports:
         - containerPort: 8778
           protocol: TCP
-          name: jolkia
+          name: jolokia
         - containerPort: 8080
           protocol: TCP
           name: http
@@ -65,5 +65,5 @@ spec:
       from:
         kind: ImageStreamTag
         name: app-front:latest
-        namespace: huub-freubel
     type: ImageChange
+
