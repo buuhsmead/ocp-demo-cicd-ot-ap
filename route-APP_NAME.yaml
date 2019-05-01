@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    description: Route for application's https service.
+  labels:
+    application: APP_NAME
+  name: APP_NAME
+spec:
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: APP_NAME
+    weight: 100
+  wildcardPolicy: None

@@ -15,6 +15,7 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
 
 def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
+    newman = load 'pipeline/newman.groovy'
 
 
     stage('Checkout from SCM') {
@@ -49,5 +50,11 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
         sh "mvn -v"
 
     }
+
+
+
+
+
+
 }
 
