@@ -55,6 +55,20 @@ node('maven') {
             }
 
 
+            stage('APP Main config') {
+                sh "oc apply -f is-openjdk18-openshift.yaml "
+                sh "oc apply -f is-app-main.yaml"
+                sh "oc apply -f is-app-front.yaml"
+
+                sh "oc apply -f bc-app-main.yaml"
+                sh "oc apply -f bc-app-front.yaml"
+
+                sh "oc apply -f svc-app-main.yaml"
+                sh "oc apply -f svc-app-front.yaml"
+            }
+
+
+
             stage('APP Main Image') {
                 //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
                 sh "oc start-build app-main --from-dir=app-main/build/libs/app-main-0.1.0.jar --follow"
