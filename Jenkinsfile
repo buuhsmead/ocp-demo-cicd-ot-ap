@@ -19,14 +19,17 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
     stage('Checkout from SCM') {
         // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
-        def commitHash = checkout(scm).GIT_COMMIT
+       // def commitHash = checkout(scm).GIT_COMMIT
 
         // debug printje
-        print(commitHash)
+       // print(commitHash)
+
+        checkout scm
+
 
         openshift.withCluster() {
             openshift.withProject() {
-                echo "Using project: ${openshift.project()}"
+                echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
             }
         }
     }
@@ -41,8 +44,9 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
     }
 
-    node('maven') {
+    node('Maven check') {
 
+        sh "mvn -v"
 
     }
 }
