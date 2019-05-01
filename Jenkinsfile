@@ -44,7 +44,7 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
     }
 
-    node('Maven check') {
+    stage('Maven check') {
 
         sh "mvn -v"
 
