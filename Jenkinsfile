@@ -3,7 +3,11 @@
 
 node('maven') {
 
-env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
+    openshift.withCluster() {
+        openshift.withProject('huub-cicd') {
+
+
+            env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
 //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
 //        env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
 
@@ -13,73 +17,57 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
 //    env.STAGE2 = "${projectBase}-stage"
 //    env.STAGE3 = "${projectBase}-prod"
 
-    def scmAccount = "${env.NAMESPACE}-scm-checkout"
+            def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
-    def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
-
-
+            def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
 
 
+            stage('Checkout from SCM') {
+                // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
+                // def commitHash = checkout(scm).GIT_COMMIT
 
-    stage('Checkout from SCM') {
-        // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
-       // def commitHash = checkout(scm).GIT_COMMIT
+                // debug printje
+                // print(commitHash)
 
-        // debug printje
-       // print(commitHash)
-
-        def scmVars = checkout scm
+                def scmVars = checkout scm
 
 
-        openshift.withCluster() {
-            openshift.withProject() {
                 echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
             }
+
+
+            stage('print out ENV') {
+                echo "Printing environment"
+                sh "env"
+            }
+
+
+            stage('APP Main Build') {
+                dir('app-main') {
+                    sh "${gradleCmd} bootJar"
+                }
+            }
+
+            stage('APP Front Build') {
+                dir('app-front') {
+                    sh "${gradleCmd} bootJar"
+                }
+            }
+
+
+            stage('APP Main Image') {
+                //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+                sh "oc start-build app-main --from-dir=app-main/build/libs/app-main-0.1.0.jar --follow"
+            }
+
+            stage('APP Front Image') {
+                //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+                sh "oc start-build app-front --from-dir=app-front/build/libs/app-front-0.1.0.jar --follow"
+            }
+
+
+            newman = load 'pipeline/newman.groovy'
         }
+
     }
-
-    stage('print out ENV') {
-        echo "Printing environment"
-        sh "env"
-    }
-
-//    stage('Gradle check') {
-//        sh "${gradleCmd} -v"
-//
-//    }
-//
-//    stage('Maven check') {
-//
-//        sh "mvn -v"
-//
-//    }
-
-
-    stage('APP Main Build') {
-        dir('app-main') {
-            sh "${gradleCmd} bootJar"
-        }
-    }
-
-    stage('APP Front Build') {
-        dir('app-front') {
-            sh "${gradleCmd} bootJar"
-        }
-    }
-
-
-    stage('APP Main Image') {
-        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-        sh "oc start-build app-main --from-dir=app-main/build/libs/app-main-0.1.0.jar --follow"
-    }
-
-    stage('APP Front Image') {
-        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-        sh "oc start-build app-front --from-dir=app-front/build/libs/app-front-0.1.0.jar --follow"
-    }
-
-
-    newman = load 'pipeline/newman.groovy'
-
 }
-
