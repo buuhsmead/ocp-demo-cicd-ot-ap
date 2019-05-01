@@ -28,7 +28,7 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
         // debug printje
        // print(commitHash)
 
-        checkout scm
+        def scmVars = checkout scm
 
 
         openshift.withCluster() {
@@ -66,6 +66,13 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
             sh "${gradleCmd} bootJar"
         }
     }
+
+
+    stage('APP Main Image') {
+        sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+    }
+
+
 
     newman = load 'pipeline/newman.groovy'
 
