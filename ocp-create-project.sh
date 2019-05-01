@@ -15,7 +15,8 @@ oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 
 ##oc new-build --name=app-main registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift --binary=true
 ##oc new-build --name=app-front registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift --binary=true
-
+##oc new-app huub-freubel/app-front:latest
+##oc expose svc/app-front
 
 # follow logging
 oc logs -f bc/ocp-demo-cicd-ot-ap

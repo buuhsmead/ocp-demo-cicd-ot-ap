@@ -1,0 +1,66 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  generation: 1
+  labels:
+    app: app-front
+  name: app-front
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: app-front
+    deploymentconfig: app-front
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: app-front
+        deploymentconfig: app-front
+    spec:
+      containers:
+      - image: docker-registry.default.svc:5000/huub-freubel/app-front:latest
+        imagePullPolicy: Always
+        name: app-front
+        ports:
+        - containerPort: 8778
+          protocol: TCP
+          name: jolkia
+        - containerPort: 8080
+          protocol: TCP
+          name: http
+        - containerPort: 8443
+          protocol: TCP
+          name: https
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - app-front
+      from:
+        kind: ImageStreamTag
+        name: app-front:latest
+        namespace: huub-freubel
+    type: ImageChange
