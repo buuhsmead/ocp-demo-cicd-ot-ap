@@ -15,7 +15,7 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
 
     def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
-    def gradleCmd = '../gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false ' // --debug
+    def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
 
 
 
