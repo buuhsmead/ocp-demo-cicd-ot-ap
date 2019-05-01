@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 
-node('maven') {
+node('jenkins-agent-gradle') {
 
 env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
 //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
@@ -19,7 +19,7 @@ def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
     stage('Checkout from SCM') {
         // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
-        scm checkout
+        checkout
     }
 
     stage('print out ENV') {
