@@ -11,7 +11,8 @@ oc new-project ${PROJECT_NAME}
 
 oc create -f secret-scm-checkout.yaml
 
-oc new-app ${GIT_REPO}
+oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 
 
-
+# follow logging
+oc logs -f bc/ocp-demo-cicd-ot-ap

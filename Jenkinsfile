@@ -12,7 +12,8 @@ env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespac
 
 def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
-echo "Printing environment"
-sh "env"
-
+node {
+    echo "Printing environment"
+    sh "env"
+}
 
