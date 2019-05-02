@@ -56,26 +56,21 @@ node('maven') {
         openshift.withCluster() {
             openshift.withProject() {
                 openshift.logLevel(3)
+
+                //       sh "oc apply -f is-openjdk18-openshift.yaml "
                 openshift.apply(readFile('is-openjdk18-openshift.yaml'))
+                openshift.apply(readFile('is-app-main.yaml'))
+                openshift.apply(readFile('is-app-front.yaml'))
+                openshift.apply(readFile('svc-app-main.yaml'))
+                openshift.apply(readFile('svc-app-front.yaml'))
+                openshift.apply(readFile('bc-app-main.yaml'))
+                openshift.apply(readFile('bc-app-front.yaml'))
+                openshift.apply(readFile('route-app-main.yaml'))
+                openshift.apply(readFile('route-app-front.yaml'))
+                openshift.apply(readFile('dc-app-main.yaml'))
+                openshift.apply(readFile('dc-app-front.yaml'))
             }
-            }
-
-
- //       sh "oc apply -f is-openjdk18-openshift.yaml "
-        sh "oc apply -f is-app-main.yaml"
-        sh "oc apply -f is-app-front.yaml"
-
-        sh "oc apply -f svc-app-main.yaml"
-        sh "oc apply -f svc-app-front.yaml"
-
-        sh "oc apply -f bc-app-main.yaml"
-        sh "oc apply -f bc-app-front.yaml"
-
-        sh "oc apply -f route-app-main.yaml"
-        sh "oc apply -f route-app-front.yaml"
-
-        sh "oc apply -f dc-app-main.yaml"
-        sh "oc apply -f dc-app-front.yaml"
+        }
     }
 
 
