@@ -2,7 +2,7 @@
 
 
 node('maven') {
-            env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
+    env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
 //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
 //        env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
 
@@ -12,85 +12,84 @@ node('maven') {
 //    env.STAGE2 = "${projectBase}-tst"
 //    env.STAGE3 = "${projectBase}-prd"
 
-            def scmAccount = "${env.NAMESPACE}-scm-checkout"
+    def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
-            def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
+    def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
 
     def projectName = openshift.project();
     echo "Now using project ${projectName}"
 
 
-            stage('Checkout from SCM') {
-                // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
-                // def commitHash = checkout(scm).GIT_COMMIT
+    stage('Checkout from SCM') {
+        // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
+        // def commitHash = checkout(scm).GIT_COMMIT
 
-                // debug printje
-                // print(commitHash)
-              //  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'huub-cicd-scm-checkout', url: 'https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git']]])
+        // debug printje
+        // print(commitHash)
+        //  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'huub-cicd-scm-checkout', url: 'https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git']]])
 
-                def scmVars = checkout scm
-
-
-                echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
-            }
+        def scmVars = checkout scm
 
 
-            stage('print out ENV') {
-                echo "Printing environment"
-                sh "env"
-            }
+        echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
+    }
 
 
-            stage('APP Main Build') {
-                dir('app-main') {
-                    sh "${gradleCmd} bootJar"
-                }
-            }
-
-            stage('APP Front Build') {
-                dir('app-front') {
-                    sh "${gradleCmd} bootJar"
-                }
-            }
+    stage('print out ENV') {
+        echo "Printing environment"
+        sh "env"
+    }
 
 
-            stage('APP config') {
-                sh "oc apply -f is-openjdk18-openshift.yaml "
-                sh "oc apply -f is-app-main.yaml"
-                sh "oc apply -f is-app-front.yaml"
+    stage('APP Main Build') {
+        dir('app-main') {
+            sh "${gradleCmd} bootJar"
+        }
+    }
 
-                sh "oc apply -f svc-app-main.yaml"
-                sh "oc apply -f svc-app-front.yaml"
-
-                sh "oc apply -f bc-app-main.yaml"
-                sh "oc apply -f bc-app-front.yaml"
-
-                sh "oc apply -f route-app-main.yaml"
-                sh "oc apply -f route-app-front.yaml"
-
-                sh "oc apply -f dc-app-main.yaml"
-                sh "oc apply -f dc-app-front.yaml"
-            }
+    stage('APP Front Build') {
+        dir('app-front') {
+            sh "${gradleCmd} bootJar"
+        }
+    }
 
 
+    stage('APP config') {
+        sh "oc apply -f is-openjdk18-openshift.yaml "
+        sh "oc apply -f is-app-main.yaml"
+        sh "oc apply -f is-app-front.yaml"
 
-            stage('APP Main Image') {
-                //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-                sh "oc start-build app-main --from-dir=app-main/build/libs --follow"
-            }
+        sh "oc apply -f svc-app-main.yaml"
+        sh "oc apply -f svc-app-front.yaml"
 
-            stage('APP Front Image') {
-                //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-                sh "oc start-build app-front --from-dir=app-front/build/libs --follow"
-            }
+        sh "oc apply -f bc-app-main.yaml"
+        sh "oc apply -f bc-app-front.yaml"
+
+        sh "oc apply -f route-app-main.yaml"
+        sh "oc apply -f route-app-front.yaml"
+
+        sh "oc apply -f dc-app-main.yaml"
+        sh "oc apply -f dc-app-front.yaml"
+    }
 
 
-            newman = load 'pipeline/newman.groovy'
+    stage('APP Main Image') {
+        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+        sh "oc start-build app-main --from-dir=app-main/build/libs --follow"
+    }
+
+    stage('APP Front Image') {
+        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+        sh "oc start-build app-front --from-dir=app-front/build/libs --follow"
+    }
 
 
-            stage('Unit test App Main') {
-                echo "Not done yet"
-            }
+    newman = load 'pipeline/newman.groovy'
+
+
+    stage('Unit test App Main') {
+        echo "Not done yet"
+    }
 
     stage('Unit test App Front') {
         echo "Not done yet"
@@ -112,19 +111,19 @@ node('maven') {
 //    }
 
 
-            stage('Promote to TEST') {
+    stage('Promote to TEST') {
 
-                echo "Promoting to TST"
-                openshift.withCluster() {
-                    openshift.withProject() {
-                        echo "Promoting MAIN"
-                        openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.1", "huub-tst/app-main:0.1")
+        echo "Promoting to TST"
+        openshift.withCluster() {
+            openshift.withProject() {
+                echo "Promoting MAIN"
+                openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.2", "huub-tst/app-main:0.1", "huub-tst/app-main:latest")
 
-                        echo "Promoting FRONT"
-                        openshift.tag("huub-cicd/app-front:latest", "huub-tst/app-front:0.1.1", "huub-tst/app-front:0.1")
-                    }
-                }
+                echo "Promoting FRONT"
+                openshift.tag("huub-cicd/app-front:latest", "huub-tst/app-front:0.1.2", "huub-tst/app-front:0.1", "huub-tst/app-front:latest")
             }
+        }
+    }
 
 
     stage('APP TEST config') {
@@ -136,19 +135,18 @@ node('maven') {
 //        sh "oc apply -f is-app-front.yaml"
 
 
-
-                sh "oc apply -f svc-app-main.yaml --loglevel=4 -n huub-tst"
-                sh "oc apply -f svc-app-front.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f svc-app-main.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f svc-app-front.yaml --loglevel=4 -n huub-tst"
 
 //        sh "oc apply -f bc-app-main.yaml"
 //        sh "oc apply -f bc-app-front.yaml"
 
-                sh "oc apply -f route-app-main.yaml --loglevel=4 -n huub-tst"
-                sh "oc apply -f route-app-front.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f route-app-main.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f route-app-front.yaml --loglevel=4 -n huub-tst"
 
-                sh "oc apply -f dc-app-main.yaml --loglevel=4 -n huub-tst"
-                sh "oc apply -f dc-app-front.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f dc-app-main.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f dc-app-front.yaml --loglevel=4 -n huub-tst"
 
     }
 
-        }
+}
