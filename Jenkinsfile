@@ -3,8 +3,8 @@
 
 node('maven') {
 
-    openshift.withCluster() {
-        openshift.withProject('huub-freubel') {
+//    openshift.withCluster() {
+//        openshift.withProject('huub-freubel') {
 
 
             env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
@@ -90,5 +90,5 @@ node('maven') {
 
         }
 
-    }
-}
+//    }
+//}
