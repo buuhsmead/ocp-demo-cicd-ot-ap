@@ -88,6 +88,39 @@ node('maven') {
 
             newman = load 'pipeline/newman.groovy'
 
+
+            stage('Unit test App Main') {
+                echo "Not done yet"
+            }
+
+    stage('Unit test App Front') {
+        echo "Not done yet"
+    }
+
+//    stage("Unit Testing & Analysis") {
+//
+//        dir('app') {
+//            parallel(
+//                    'Test': {
+//                        sh "${mvnCmd} test"
+//                        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+//                    },
+//                    'Static Analysis': {
+//                        sh "${mvnCmd} sonar:sonar -Dsonar.host.url=${params.SONAR_URL} -DskipTests=true"
+//                    }
+//            )
+//        }
+//    }
+
+
+            stage('Promote to TEST Front') {
+
+
+
+                openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.0")
+
+            }
+
         }
 
 //    }
