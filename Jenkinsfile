@@ -8,8 +8,8 @@ node('maven') {
 
 //    env.APP_NAME = "${env.JOB_NAME}".replaceAll(/-?pipeline-?/, '').replaceAll(/-?${env.NAMESPACE}-?/, '')
 
-    def projectName = openshift.project()
-    def projectBase = NAMESPACE.substring(0, NAMESPACE.lastIndexOf('-'))
+    def projectName = NAMESPACE
+    def projectBase = projectName.substring(0, projectName.lastIndexOf('-'))
     def projectTEST = projectBase + "-tst"
 
 //    env.STAGE1 = "${projectBase}-dev"
