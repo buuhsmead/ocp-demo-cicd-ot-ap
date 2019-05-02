@@ -138,17 +138,19 @@ node('maven') {
 //        sh "oc apply -f is-app-main.yaml"
 //        sh "oc apply -f is-app-front.yaml"
 
-                sh "oc apply -f svc-app-main.yaml"
-                sh "oc apply -f svc-app-front.yaml"
+
+
+                sh "oc apply -f svc-app-main.yaml --loglevel=4"
+                sh "oc apply -f svc-app-front.yaml --loglevel=4"
 
 //        sh "oc apply -f bc-app-main.yaml"
 //        sh "oc apply -f bc-app-front.yaml"
 
-                sh "oc apply -f route-app-main.yaml"
-                sh "oc apply -f route-app-front.yaml"
+                sh "oc apply -f route-app-main.yaml --loglevel=4"
+                sh "oc apply -f route-app-front.yaml --loglevel=4"
 
-                sh "oc apply -f dc-app-main.yaml"
-                sh "oc apply -f dc-app-front.yaml"
+                sh "oc apply -f dc-app-main.yaml --loglevel=4"
+                sh "oc apply -f dc-app-front.yaml --loglevel=4"
             }
         }
     }
