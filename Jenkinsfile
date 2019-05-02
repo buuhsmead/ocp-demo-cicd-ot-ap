@@ -108,11 +108,16 @@ node('maven') {
 //    }
 
 
-            stage('Promote to TEST Front') {
+            stage('Promote to TEST') {
 
+                echo "Promoting to TST"
                 openshift.withCluster() {
                     openshift.withProject() {
-                        openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.0")
+                        echo "Promoting MAIN"
+                        openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.0", "huub-tst/app-main:0.1")
+
+                        echo "Promoting FRONT"
+                        openshift.tag("huub-cicd/app-front:latest", "huub-tst/app-front:0.1.0", "huub-tst/app-front:0.1")
                     }
                 }
             }

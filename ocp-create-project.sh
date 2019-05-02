@@ -20,3 +20,12 @@ oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 
 # follow logging
 oc logs -f bc/ocp-demo-cicd-ot-ap
+
+
+
+##
+# Next stage (depends on naming conventions)
+oc new-project "huub-tst"
+
+oc policy add-role-to-user edit system:serviceaccount:huub-cicd:jenkins -n huub-tst
+
