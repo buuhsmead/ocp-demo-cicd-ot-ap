@@ -2,11 +2,6 @@
 
 
 node('maven') {
-
-//    openshift.withCluster() {
-//        openshift.withProject('huub-freubel') {
-
-
             env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
 //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
 //        env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
@@ -115,13 +110,11 @@ node('maven') {
 
             stage('Promote to TEST Front') {
 
-
-
-                openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.0")
-
+                openshift.withCluster() {
+                    openshift.withProject() {
+                        openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.0")
+                    }
+                }
             }
 
         }
-
-//    }
-//}
