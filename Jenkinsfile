@@ -9,8 +9,8 @@ node('maven') {
 //    env.APP_NAME = "${env.JOB_NAME}".replaceAll(/-?pipeline-?/, '').replaceAll(/-?${env.NAMESPACE}-?/, '')
 //    def projectBase = "${env.NAMESPACE}".replaceAll(/-dev/, '')
 //    env.STAGE1 = "${projectBase}-dev"
-//    env.STAGE2 = "${projectBase}-stage"
-//    env.STAGE3 = "${projectBase}-prod"
+//    env.STAGE2 = "${projectBase}-tst"
+//    env.STAGE3 = "${projectBase}-prd"
 
             def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
@@ -125,5 +125,32 @@ node('maven') {
                     }
                 }
             }
+
+
+    stage('APP TEST config') {
+
+        echo "Config on TST"
+        openshift.withCluster() {
+            openshift.withProject('huub-tst') {
+
+
+//        sh "oc apply -f is-openjdk18-openshift.yaml "
+//        sh "oc apply -f is-app-main.yaml"
+//        sh "oc apply -f is-app-front.yaml"
+
+                sh "oc apply -f svc-app-main.yaml"
+                sh "oc apply -f svc-app-front.yaml"
+
+//        sh "oc apply -f bc-app-main.yaml"
+//        sh "oc apply -f bc-app-front.yaml"
+
+                sh "oc apply -f route-app-main.yaml"
+                sh "oc apply -f route-app-front.yaml"
+
+                sh "oc apply -f dc-app-main.yaml"
+                sh "oc apply -f dc-app-front.yaml"
+            }
+        }
+    }
 
         }
