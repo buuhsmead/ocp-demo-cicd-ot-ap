@@ -16,6 +16,9 @@ node('maven') {
 
             def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
 
+    def projectName = openshift.project();
+    echo "Now using project ${projectName}"
+
 
             stage('Checkout from SCM') {
                 // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
@@ -23,6 +26,7 @@ node('maven') {
 
                 // debug printje
                 // print(commitHash)
+              //  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'huub-cicd-scm-checkout', url: 'https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git']]])
 
                 def scmVars = checkout scm
 
@@ -114,10 +118,10 @@ node('maven') {
                 openshift.withCluster() {
                     openshift.withProject() {
                         echo "Promoting MAIN"
-                        openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.0", "huub-tst/app-main:0.1")
+                        openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.1", "huub-tst/app-main:0.1")
 
                         echo "Promoting FRONT"
-                        openshift.tag("huub-cicd/app-front:latest", "huub-tst/app-front:0.1.0", "huub-tst/app-front:0.1")
+                        openshift.tag("huub-cicd/app-front:latest", "huub-tst/app-front:0.1.1", "huub-tst/app-front:0.1")
                     }
                 }
             }
