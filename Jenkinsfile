@@ -53,7 +53,15 @@ node('maven') {
 
 
     stage('APP config') {
-        sh "oc apply -f is-openjdk18-openshift.yaml "
+        openshift.withCluster() {
+            openshift.withProject() {
+                openshift.logLevel(3)
+                openshift.apply(readFile('is-openjdk18-openshift.yaml'))
+            }
+            }
+
+
+ //       sh "oc apply -f is-openjdk18-openshift.yaml "
         sh "oc apply -f is-app-main.yaml"
         sh "oc apply -f is-app-front.yaml"
 
