@@ -140,7 +140,7 @@ node('maven') {
 
 
 
-                sh "oc apply -f svc-app-main.yaml --loglevel=4"
+                sh "oc create -f svc-app-main.yaml --loglevel=4"
                 sh "oc apply -f svc-app-front.yaml --loglevel=4"
 
 //        sh "oc apply -f bc-app-main.yaml"
