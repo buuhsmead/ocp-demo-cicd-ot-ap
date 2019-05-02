@@ -8,6 +8,7 @@ node('maven') {
 
 //    env.APP_NAME = "${env.JOB_NAME}".replaceAll(/-?pipeline-?/, '').replaceAll(/-?${env.NAMESPACE}-?/, '')
 
+    def projectName = openshift.project()
     def projectBase = NAMESPACE.substring(0, NAMESPACE.lastIndexOf('-'))
     def projectTEST = projectBase + "-tst"
 
@@ -19,7 +20,6 @@ node('maven') {
 
     def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
 
-    def projectName = openshift.project();
     echo "Now using project ${projectName} or via namepsace ${env.NAMESPACE}, project base ${projectBase}"
 
 
@@ -111,14 +111,14 @@ node('maven') {
 
     stage('Promote to TEST') {
 
-        echo "Promoting to TST"
+        echo "Promoting to TST - ${projectTEST}"
         openshift.withCluster() {
             openshift.withProject() {
                 echo "Promoting MAIN"
-                openshift.tag("huub-cicd/app-main:latest", "huub-tst/app-main:0.1.2", "huub-tst/app-main:0.1", "huub-tst/app-main:latest")
+                openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
 
                 echo "Promoting FRONT"
-                openshift.tag("huub-cicd/app-front:latest", "huub-tst/app-front:0.1.2", "huub-tst/app-front:0.1", "huub-tst/app-front:latest")
+                openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
             }
         }
     }
@@ -126,7 +126,7 @@ node('maven') {
 
     stage('APP TEST config') {
 
-        echo "Config on TST"
+        echo "Config on project '${projectTEST}'"
 
 //        sh "oc apply -f is-openjdk18-openshift.yaml "
 //        sh "oc apply -f is-app-main.yaml"
@@ -138,17 +138,17 @@ node('maven') {
 
 
         sh "oc apply -f svc-app-main.yaml -n ${projectTEST}"
-        sh "oc apply -f svc-app-front.yaml -n huub-tst"
+        sh "oc apply -f svc-app-front.yaml -n ${projectTEST}"
 
 // builds are only done on development, after the image is created: no more builds
 //        sh "oc apply -f bc-app-main.yaml"
 //        sh "oc apply -f bc-app-front.yaml"
 
-        sh "oc apply -f route-app-main.yaml -n huub-tst"
-        sh "oc apply -f route-app-front.yaml -n huub-tst"
+        sh "oc apply -f route-app-main.yaml -n ${projectTEST}"
+        sh "oc apply -f route-app-front.yaml -n ${projectTEST}"
 
-        sh "oc apply -f dc-app-main.yaml -n huub-tst"
-        sh "oc apply -f dc-app-front.yaml -n huub-tst"
+        sh "oc apply -f dc-app-main.yaml -n ${projectTEST}"
+        sh "oc apply -f dc-app-front.yaml -n ${projectTEST}"
 
     }
 
