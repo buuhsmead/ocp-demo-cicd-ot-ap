@@ -58,7 +58,7 @@ node('maven') {
                 openshift.logLevel(3)
 
                 //       sh "oc apply -f is-openjdk18-openshift.yaml "
-                openshift.apply(readFile('is-openjdk18-openshift.yaml'))
+                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
                 openshift.apply(readFile('is-app-main.yaml'))
                 openshift.apply(readFile('is-app-front.yaml'))
                 openshift.apply(readFile('svc-app-main.yaml'))
