@@ -2,12 +2,15 @@
 
 
 node('maven') {
-    env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
+//    env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
 //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
 //        env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
 
 //    env.APP_NAME = "${env.JOB_NAME}".replaceAll(/-?pipeline-?/, '').replaceAll(/-?${env.NAMESPACE}-?/, '')
-//    def projectBase = "${env.NAMESPACE}".replaceAll(/-dev/, '')
+
+    def projectBase = NAMESPACE.substring(0, NAMESPACE.lastIndexOf('-'))
+    def projectTEST = projectBase + "-tst"
+
 //    env.STAGE1 = "${projectBase}-dev"
 //    env.STAGE2 = "${projectBase}-tst"
 //    env.STAGE3 = "${projectBase}-prd"
@@ -17,15 +20,10 @@ node('maven') {
     def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
 
     def projectName = openshift.project();
-    echo "Now using project ${projectName}"
+    echo "Now using project ${projectName} or via namepsace ${env.NAMESPACE}, project base ${projectBase}"
 
 
     stage('Checkout from SCM') {
-        // git credentialsId: "${scmAccount}", url: 'https://bitbucket.hopp.ns.nl:8443/scm/rho/hello-world.git'
-        // def commitHash = checkout(scm).GIT_COMMIT
-
-        // debug printje
-        // print(commitHash)
         //  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'huub-cicd-scm-checkout', url: 'https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git']]])
 
         def scmVars = checkout scm
@@ -135,17 +133,22 @@ node('maven') {
 //        sh "oc apply -f is-app-front.yaml"
 
 
-        sh "oc apply -f svc-app-main.yaml --loglevel=4 -n huub-tst"
-        sh "oc apply -f svc-app-front.yaml --loglevel=4 -n huub-tst"
+        echo "Printing environment"
+        sh "env"
 
+
+        sh "oc apply -f svc-app-main.yaml -n ${projectTEST}"
+        sh "oc apply -f svc-app-front.yaml -n huub-tst"
+
+// builds are only done on development, after the image is created: no more builds
 //        sh "oc apply -f bc-app-main.yaml"
 //        sh "oc apply -f bc-app-front.yaml"
 
-        sh "oc apply -f route-app-main.yaml --loglevel=4 -n huub-tst"
-        sh "oc apply -f route-app-front.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f route-app-main.yaml -n huub-tst"
+        sh "oc apply -f route-app-front.yaml -n huub-tst"
 
-        sh "oc apply -f dc-app-main.yaml --loglevel=4 -n huub-tst"
-        sh "oc apply -f dc-app-front.yaml --loglevel=4 -n huub-tst"
+        sh "oc apply -f dc-app-main.yaml -n huub-tst"
+        sh "oc apply -f dc-app-front.yaml -n huub-tst"
 
     }
 
