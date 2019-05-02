@@ -59,16 +59,16 @@ node('maven') {
 
                 //       sh "oc apply -f is-openjdk18-openshift.yaml "
                 openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
-                openshift.apply(readFile('is-app-main.yaml'))
-                openshift.apply(readFile('is-app-front.yaml'))
-                openshift.apply(readFile('svc-app-main.yaml'))
-                openshift.apply(readFile('svc-app-front.yaml'))
-                openshift.apply(readFile('bc-app-main.yaml'))
-                openshift.apply(readFile('bc-app-front.yaml'))
-                openshift.apply(readFile('route-app-main.yaml'))
-                openshift.apply(readFile('route-app-front.yaml'))
-                openshift.apply(readFile('dc-app-main.yaml'))
-                openshift.apply(readFile('dc-app-front.yaml'))
+                openshift.apply(readYaml( file:'is-app-main.yaml'))
+                openshift.apply(readYaml( file:'is-app-front.yaml'))
+                openshift.apply(readYaml( file:'svc-app-main.yaml'))
+                openshift.apply(readYaml( file:'svc-app-front.yaml'))
+                openshift.apply(readYaml( file:'bc-app-main.yaml'))
+                openshift.apply(readYaml( file:'bc-app-front.yaml'))
+                openshift.apply(readYaml( file:'route-app-main.yaml'))
+                openshift.apply(readYaml( file:'route-app-front.yaml'))
+                openshift.apply(readYaml( file:'dc-app-main.yaml'))
+                openshift.apply(readYaml( file:'dc-app-front.yaml'))
             }
         }
     }
@@ -131,28 +131,19 @@ node('maven') {
 
         echo "Config on project '${projectTEST}'"
 
-//        sh "oc apply -f is-openjdk18-openshift.yaml "
-//        sh "oc apply -f is-app-main.yaml"
-//        sh "oc apply -f is-app-front.yaml"
+        openshift.withCluster() {
+            openshift.withProject(projectTEST) {
+                openshift.logLevel(3)
 
+                openshift.apply(readYaml(file: 'svc-app-main.yaml'))
+                openshift.apply(readYaml(file: 'svc-app-front.yaml'))
+                openshift.apply(readYaml(file: 'route-app-main.yaml'))
+                openshift.apply(readYaml(file: 'route-app-front.yaml'))
 
-        echo "Printing environment"
-        sh "env"
-
-
-        sh "oc apply -f svc-app-main.yaml -n ${projectTEST}"
-        sh "oc apply -f svc-app-front.yaml -n ${projectTEST}"
-
-// builds are only done on development, after the image is created: no more builds
-//        sh "oc apply -f bc-app-main.yaml"
-//        sh "oc apply -f bc-app-front.yaml"
-
-        sh "oc apply -f route-app-main.yaml -n ${projectTEST}"
-        sh "oc apply -f route-app-front.yaml -n ${projectTEST}"
-
-        sh "oc apply -f dc-app-main.yaml -n ${projectTEST}"
-        sh "oc apply -f dc-app-front.yaml -n ${projectTEST}"
-
+                openshift.apply(readYaml(file: 'dc-app-main.yaml'))
+                openshift.apply(readYaml(file: 'dc-app-front.yaml'))
+            }
+        }
     }
 
 }
