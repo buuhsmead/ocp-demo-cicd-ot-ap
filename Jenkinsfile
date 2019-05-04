@@ -28,8 +28,13 @@ node('maven') {
 
         def scmVars = checkout scm
 
-        echo "scmVars"
-        println scmVars
+        echo "SCM"
+        print scm
+
+        // echo "scmVars"
+        // println scmVars
+        // {GIT_BRANCH=origin/master, GIT_COMMIT=f2c1c54d479b386c32204572288430b36a91afac, GIT_PREVIOUS_COMMIT=6839b00893d213899c88f99694d6619f6112d7e9, GIT_PREVIOUS_SUCCESSFUL_COMMIT=6839b00893d213899c88f99694d6619f6112d7e9, GIT_URL=https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git}
+
 
         echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
     }
