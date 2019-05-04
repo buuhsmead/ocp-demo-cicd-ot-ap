@@ -28,6 +28,8 @@ node('maven') {
 
         def scmVars = checkout scm
 
+        echo "scmVars"
+        println scmVars
 
         echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
     }
