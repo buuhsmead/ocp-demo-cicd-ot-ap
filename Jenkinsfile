@@ -87,6 +87,12 @@ node('maven') {
                 def created = openshift.apply( models )
                 echo "The template instantiated: ${created}"
 
+
+                echo "As groovy objects "
+                def objs = models.objects( exportable:true )
+                print objs
+
+
             }
         }
     }
