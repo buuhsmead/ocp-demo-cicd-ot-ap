@@ -80,11 +80,14 @@ node('maven') {
 //                openshift.apply(readYaml( file:'dc-app-main.yaml'))
 //                openshift.apply(readYaml( file:'dc-app-front.yaml'))
 
-//                def models = openshift.process  ( readFile( 'app-main-build-template.yaml') , "-p", "APP_NAME=app-main" )
-//
-//                def created = openshift.create( models )
+                def models = openshift.process( readFile( 'app-main-build-template.yaml') , "-p", "APP_NAME=app-main" )
 
-                openshiftCreateResource jsonyaml: 'app-main-build-template.yaml' , verbose: 'true'
+                echo "Creating this template will instantiate ${models.size()} objects"
+
+                def created = openshift.create( models )
+                echo "The template instantiated: ${models.names()}"
+
+
 
             }
         }
