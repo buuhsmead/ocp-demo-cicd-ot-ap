@@ -64,9 +64,10 @@ node('maven') {
     
     stage('APP config') {
         openshift.withCluster() {
+
             openshift.withProject() {
                 openshift.logLevel(3)
-                
+
                 //       sh "oc apply -f is-openjdk18-openshift.yaml "
 //                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
 //                openshift.apply(readYaml( file:'is-app-main.yaml'))
@@ -87,14 +88,15 @@ node('maven') {
                 def created = openshift.apply( models )
                 echo "The template instantiated: ${created}"
 
+                def bc = created.narrow('bc')
 
-                echo "As groovy objects "
-                def objs = models.objects( exportable:true )
+                def bcObj = bc.object()
 
-                objs.each{ print }
+                print bcObj
 
 
             }
+
         }
     }
     
