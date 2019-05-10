@@ -84,7 +84,7 @@ node('maven') {
 
                 echo "Creating this template will instantiate ${models.size()} objects"
 
-                def created = openshift.create( models )
+                def created = openshift.apply( models )
                 echo "The template instantiated: ${models.names()}"
 
 
