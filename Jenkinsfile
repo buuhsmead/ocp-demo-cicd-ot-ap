@@ -90,7 +90,8 @@ node('maven') {
 
                 echo "As groovy objects "
                 def objs = models.objects( exportable:true )
-                print objs
+
+                objs.each{ print }
 
 
             }
