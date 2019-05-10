@@ -36,6 +36,8 @@ node('maven') {
         openshift.withCluster() {
             openshift.withProject() {
                 echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
+
+
             }
         }
     }
@@ -66,17 +68,23 @@ node('maven') {
                 openshift.logLevel(3)
                 
                 //       sh "oc apply -f is-openjdk18-openshift.yaml "
-                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
-                openshift.apply(readYaml( file:'is-app-main.yaml'))
-                openshift.apply(readYaml( file:'is-app-front.yaml'))
-                openshift.apply(readYaml( file:'svc-app-main.yaml'))
-                openshift.apply(readYaml( file:'svc-app-front.yaml'))
-                openshift.apply(readYaml( file:'bc-app-main.yaml'))
-                openshift.apply(readYaml( file:'bc-app-front.yaml'))
-                openshift.apply(readYaml( file:'route-app-main.yaml'))
-                openshift.apply(readYaml( file:'route-app-front.yaml'))
-                openshift.apply(readYaml( file:'dc-app-main.yaml'))
-                openshift.apply(readYaml( file:'dc-app-front.yaml'))
+//                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
+//                openshift.apply(readYaml( file:'is-app-main.yaml'))
+//                openshift.apply(readYaml( file:'is-app-front.yaml'))
+//                openshift.apply(readYaml( file:'svc-app-main.yaml'))
+//                openshift.apply(readYaml( file:'svc-app-front.yaml'))
+//                openshift.apply(readYaml( file:'bc-app-main.yaml'))
+//                openshift.apply(readYaml( file:'bc-app-front.yaml'))
+//                openshift.apply(readYaml( file:'route-app-main.yaml'))
+//                openshift.apply(readYaml( file:'route-app-front.yaml'))
+//                openshift.apply(readYaml( file:'dc-app-main.yaml'))
+//                openshift.apply(readYaml( file:'dc-app-front.yaml'))
+                openshift.process()
+                def models = openshift.process( "app-main-build-template.yaml", "-p", "APP_NAME=app-main" )
+
+                def created = openshift.create( models )
+
+
             }
         }
     }
