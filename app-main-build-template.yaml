@@ -109,7 +109,7 @@ objects:
       name: ${APP_NAME}
     spec:
       replicas: 1
-      revisionHistoryLimit: 10
+      revisionHistoryLimit: 5
       selector:
         app: ${APP_NAME}
         deploymentconfig: ${APP_NAME}
