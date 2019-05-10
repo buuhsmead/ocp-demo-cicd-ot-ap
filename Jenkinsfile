@@ -80,7 +80,7 @@ node('maven') {
 //                openshift.apply(readYaml( file:'dc-app-main.yaml'))
 //                openshift.apply(readYaml( file:'dc-app-front.yaml'))
 
-                def models = openshift.process( "app-main-build-template.yaml", "-p", "APP_NAME=app-main" )
+                def models = openshift.process  ( readYaml( 'app-main-build-template.yaml') , "-p", "APP_NAME=app-main" )
 
                 def created = openshift.create( models )
 
