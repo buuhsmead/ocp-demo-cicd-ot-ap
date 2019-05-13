@@ -3,7 +3,6 @@ kind: DeploymentConfig
 metadata:
   annotations:
     openshift.io/generated-by: OpenShiftNewApp
-  creationTimestamp: null
   generation: 1
   labels:
     app: app-front
@@ -28,7 +27,6 @@ spec:
     metadata:
       annotations:
         openshift.io/generated-by: OpenShiftNewApp
-      creationTimestamp: null
       labels:
         app: app-front
         deploymentconfig: app-front

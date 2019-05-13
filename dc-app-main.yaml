@@ -3,7 +3,6 @@ kind: DeploymentConfig
 metadata:
   annotations:
     openshift.io/generated-by: OpenShiftNewApp
-  creationTimestamp: null
   generation: 1
   labels:
     app: app-main
@@ -28,7 +27,6 @@ spec:
     metadata:
       annotations:
         openshift.io/generated-by: OpenShiftNewApp
-      creationTimestamp: null
       labels:
         app: app-main
         deploymentconfig: app-main
@@ -42,7 +40,7 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /actuator/health
-            port: 8080
+            port: "8080"
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 10
@@ -52,7 +50,7 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /actuator/health
-            port: 8080
+            port: "8080"
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 10
@@ -95,3 +93,4 @@ spec:
         kind: ImageStreamTag
         name: app-main:latest
     type: ImageChange
+status:
