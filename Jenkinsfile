@@ -154,7 +154,7 @@ node('maven') {
     }
 
     
-    stage('APP TEST config') {
+    stage('APP MAIN TEST config') {
         
         echo "Config on project '${projectTEST}'"
         
@@ -167,26 +167,38 @@ node('maven') {
 
                 println models
 
-                for ( obj in models) {
-                    createOrReplace(obj)
-                }
+                models.each { createOrReplace(it) }
 
-
-//                def dcSelector = openshift.selector('dc', 'app-main')
-//
-//                // TODO not for all but foreach
-//                if (dcSelector.exists()) {
-//                    openshift.replace( models )
-//                } else {
-//                    openshift.create( models )
+//                for ( obj in models) {
+//                    createOrReplace(obj)
 //                }
-
 
 
             }
         }
     }
-    
+
+    stage('APP FRONT TEST config') {
+
+        echo "Config on project '${projectTEST}'"
+
+        openshift.withCluster() {
+            openshift.withProject(projectTEST) {
+                openshift.logLevel(3)
+
+
+                def models = openshift.process( readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-front" )
+
+                println models
+
+//                for ( obj in models) {
+//                    createOrReplace(obj)
+//                }
+
+                models.each { createOrReplace(it) }
+            }
+        }
+    }
 }
 
 
@@ -194,10 +206,10 @@ def createOrReplace(Object obj) {
     def objSelector = openshift.selector(obj.kind, obj.metadata.name)
 
     if (objSelector.exists()) {
-        println "The model ${obj.name} obj ${obj.metadata.name} exists"
+        println "The model ${obj.kind} obj ${obj.metadata.name} exists"
         openshift.replace( obj )
     } else {
-        println "The model ${obj.name} obj ${obj.metadata.name} does NOT exists"
+        println "The model ${obj.kind} obj ${obj.metadata.name} does NOT exists"
         openshift.create( obj )
     }
 }
