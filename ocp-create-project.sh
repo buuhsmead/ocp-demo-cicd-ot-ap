@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-
 PROJECT_NAME="huub-cicd"
 
 GIT_REPO="https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git"
-
-APP_NAME="ABC"
 
 oc new-project ${PROJECT_NAME}
 
@@ -19,7 +16,7 @@ oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 ##oc expose svc/app-front
 
 # follow logging
-oc logs -f bc/ocp-demo-cicd-ot-ap
+##oc logs -f bc/ocp-demo-cicd-ot-ap
 
 
 
