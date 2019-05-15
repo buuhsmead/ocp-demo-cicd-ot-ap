@@ -3,6 +3,7 @@ kind: BuildConfig
 metadata:
   labels:
     build: app-main
+    app: app-main
   name: app-main
 spec:
   failedBuildsHistoryLimit: 5
@@ -26,8 +27,8 @@ spec:
   strategy:
     sourceStrategy:
       from:
-        kind: ImageStreamTag
-        name: openjdk18-openshift:latest
+        kind: DockerImage
+        name: registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:latest
     type: Source
   successfulBuildsHistoryLimit: 5
   triggers:

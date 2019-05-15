@@ -162,13 +162,18 @@ node('maven') {
             openshift.withProject(projectTEST) {
                 openshift.logLevel(3)
                 
-                openshift.apply(readYaml(file: 'svc-app-main.yaml'))
-                openshift.apply(readYaml(file: 'svc-app-front.yaml'))
-                openshift.apply(readYaml(file: 'route-app-main.yaml'))
-                openshift.apply(readYaml(file: 'route-app-front.yaml'))
-                
-                openshift.apply(readYaml(file: 'dc-app-main.yaml'))
-                openshift.apply(readYaml(file: 'dc-app-front.yaml'))
+//                openshift.apply(readYaml(file: 'svc-app-main.yaml'))
+//                openshift.apply(readYaml(file: 'svc-app-front.yaml'))
+//                openshift.apply(readYaml(file: 'route-app-main.yaml'))
+//                openshift.apply(readYaml(file: 'route-app-front.yaml'))
+//
+//                openshift.apply(readYaml(file: 'dc-app-main.yaml'))
+//                openshift.apply(readYaml(file: 'dc-app-front.yaml'))
+
+                def models = openshift.process(readYaml("app-main-deploy-template.yaml" , "-p", "APP_NAME=probeer"))
+
+                println models
+
             }
         }
     }
