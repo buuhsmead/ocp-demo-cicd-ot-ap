@@ -168,24 +168,18 @@ node('maven') {
                 println models
 
                 for ( obj in models) {
-                    def objSelector = openshift.selector(obj.kind, obj.metadata.name)
-
-                    if (objSelector.exists()) {
-                        println "The model obj ${obj.metadata.name} exists"
-                    } else {
-                        println "The model ${obj.name} obj ${obj.metadata.name} does NOT exists"
-                    }
+                    createOrReplace(obj)
                 }
 
 
-                def dcSelector = openshift.selector('dc', 'app-main')
-
-                // TODO not for all but foreach
-                if (dcSelector.exists()) {
-                    openshift.replace( models )
-                } else {
-                    openshift.create( models )
-                }
+//                def dcSelector = openshift.selector('dc', 'app-main')
+//
+//                // TODO not for all but foreach
+//                if (dcSelector.exists()) {
+//                    openshift.replace( models )
+//                } else {
+//                    openshift.create( models )
+//                }
 
 
 
@@ -196,3 +190,14 @@ node('maven') {
 }
 
 
+def createOrReplace(Object obj) {
+    def objSelector = openshift.selector(obj.kind, obj.metadata.name)
+
+    if (objSelector.exists()) {
+        println "The model ${obj.name} obj ${obj.metadata.name} exists"
+        openshift.replace( obj )
+    } else {
+        println "The model ${obj.name} obj ${obj.metadata.name} does NOT exists"
+        openshift.create( obj )
+    }
+}
