@@ -174,7 +174,16 @@ node('maven') {
 
                 println models
 
-                openshift.replace( models )
+                def dcSelector = openshift.selector('dc', 'probeer')
+
+                // TODO not for all but foreach
+                if (dcSelector.exists()) {
+                    openshift.replace( models )
+                } else {
+                    openshift.create( models )
+                }
+
+
 
             }
         }
