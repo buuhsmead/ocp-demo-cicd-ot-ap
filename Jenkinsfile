@@ -43,116 +43,116 @@ node('maven') {
     }
     
     
-    stage('print out ENV') {
-        echo "Printing environment"
-        sh "env"
-    }
-    
-    
-    stage('APP Main Build') {
-        dir('app-main') {
-            sh "${gradleCmd} bootJar"
-        }
-    }
-    
-    stage('APP Front Build') {
-        dir('app-front') {
-            sh "${gradleCmd} bootJar"
-        }
-    }
-    
-    
-    stage('APP config') {
-        openshift.withCluster() {
-
-            openshift.withProject() {
-                openshift.logLevel(3)
-
-                //       sh "oc apply -f is-openjdk18-openshift.yaml "
-//                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
-//                openshift.apply(readYaml( file:'is-app-main.yaml'))
-//                openshift.apply(readYaml( file:'is-app-front.yaml'))
-//                openshift.apply(readYaml( file:'svc-app-main.yaml'))
-//                openshift.apply(readYaml( file:'svc-app-front.yaml'))
-//                openshift.apply(readYaml( file:'bc-app-main.yaml'))
-//                openshift.apply(readYaml( file:'bc-app-front.yaml'))
-//                openshift.apply(readYaml( file:'route-app-main.yaml'))
-//                openshift.apply(readYaml( file:'route-app-front.yaml'))
-//                openshift.apply(readYaml( file:'dc-app-main.yaml'))
-//                openshift.apply(readYaml( file:'dc-app-front.yaml'))
-
-                def models = openshift.process( readFile( 'app-main-build-template.yaml') , "-p", "APP_NAME=app-main" )
-
-                echo "Creating this template will instantiate ${models.size()} objects"
-
-                def created = openshift.apply( models )
-                echo "The template instantiated: ${created}"
-
-                def bc = created.narrow('bc')
-
-                def bcObj = bc.object()
-
-                print bcObj
-
-
-            }
-
-        }
-    }
-    
-    
-    stage('APP Main Image') {
-        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-        sh "oc start-build app-main --from-dir=app-main/build/libs --follow"
-    }
-    
-    stage('APP Front Image') {
-        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-        sh "oc start-build app-front --from-dir=app-front/build/libs --follow"
-    }
-    
-    
-    newman = load 'pipeline/newman.groovy'
-    
-    
-    stage('Unit test App Main') {
-        echo "Not done yet"
-    }
-    
-    stage('Unit test App Front') {
-        echo "Not done yet"
-    }
-    
-    //    stage("Unit Testing & Analysis") {
-    //
-    //        dir('app') {
-    //            parallel(
-    //                    'Test': {
-    //                        sh "${mvnCmd} test"
-    //                        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-    //                    },
-    //                    'Static Analysis': {
-    //                        sh "${mvnCmd} sonar:sonar -Dsonar.host.url=${params.SONAR_URL} -DskipTests=true"
-    //                    }
-    //            )
-    //        }
-    //    }
-    
-    
-    stage('Promote to TEST') {
-        
-        echo "Promoting to TST - ${projectTEST}"
-        openshift.withCluster() {
-            openshift.withProject() {
-                echo "Promoting MAIN"
-                openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
-                
-                echo "Promoting FRONT"
-                openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
-            }
-        }
-    }
-    
+//    stage('print out ENV') {
+//        echo "Printing environment"
+//        sh "env"
+//    }
+//
+//
+//    stage('APP Main Build') {
+//        dir('app-main') {
+//            sh "${gradleCmd} bootJar"
+//        }
+//    }
+//
+//    stage('APP Front Build') {
+//        dir('app-front') {
+//            sh "${gradleCmd} bootJar"
+//        }
+//    }
+//
+//
+//    stage('APP config') {
+//        openshift.withCluster() {
+//
+//            openshift.withProject() {
+//                openshift.logLevel(3)
+//
+//                //       sh "oc apply -f is-openjdk18-openshift.yaml "
+////                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
+////                openshift.apply(readYaml( file:'is-app-main.yaml'))
+////                openshift.apply(readYaml( file:'is-app-front.yaml'))
+////                openshift.apply(readYaml( file:'svc-app-main.yaml'))
+////                openshift.apply(readYaml( file:'svc-app-front.yaml'))
+////                openshift.apply(readYaml( file:'bc-app-main.yaml'))
+////                openshift.apply(readYaml( file:'bc-app-front.yaml'))
+////                openshift.apply(readYaml( file:'route-app-main.yaml'))
+////                openshift.apply(readYaml( file:'route-app-front.yaml'))
+////                openshift.apply(readYaml( file:'dc-app-main.yaml'))
+////                openshift.apply(readYaml( file:'dc-app-front.yaml'))
+//
+//                def models = openshift.process( readFile( 'app-main-build-template.yaml') , "-p", "APP_NAME=app-main" )
+//
+//                echo "Creating this template will instantiate ${models.size()} objects"
+//
+//                def created = openshift.apply( models )
+//                echo "The template instantiated: ${created}"
+//
+//                def bc = created.narrow('bc')
+//
+//                def bcObj = bc.object()
+//
+//                print bcObj
+//
+//
+//            }
+//
+//        }
+//    }
+//
+//
+//    stage('APP Main Image') {
+//        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+//        sh "oc start-build app-main --from-dir=app-main/build/libs --follow"
+//    }
+//
+//    stage('APP Front Image') {
+//        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+//        sh "oc start-build app-front --from-dir=app-front/build/libs --follow"
+//    }
+//
+//
+//    newman = load 'pipeline/newman.groovy'
+//
+//
+//    stage('Unit test App Main') {
+//        echo "Not done yet"
+//    }
+//
+//    stage('Unit test App Front') {
+//        echo "Not done yet"
+//    }
+//
+//    //    stage("Unit Testing & Analysis") {
+//    //
+//    //        dir('app') {
+//    //            parallel(
+//    //                    'Test': {
+//    //                        sh "${mvnCmd} test"
+//    //                        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+//    //                    },
+//    //                    'Static Analysis': {
+//    //                        sh "${mvnCmd} sonar:sonar -Dsonar.host.url=${params.SONAR_URL} -DskipTests=true"
+//    //                    }
+//    //            )
+//    //        }
+//    //    }
+//
+//
+//    stage('Promote to TEST') {
+//
+//        echo "Promoting to TST - ${projectTEST}"
+//        openshift.withCluster() {
+//            openshift.withProject() {
+//                echo "Promoting MAIN"
+//                openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
+//
+//                echo "Promoting FRONT"
+//                openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
+//            }
+//        }
+//    }
+//
     
     stage('APP TEST config') {
         
@@ -170,7 +170,7 @@ node('maven') {
 //                openshift.apply(readYaml(file: 'dc-app-main.yaml'))
 //                openshift.apply(readYaml(file: 'dc-app-front.yaml'))
 
-                def models = openshift.process(readYaml("app-main-deploy-template.yaml" , "-p", "APP_NAME=probeer"))
+                def models = openshift.process( readYaml("app-main-deploy-template.yaml"), "-p", "APP_NAME=probeer" )
 
                 println models
 
