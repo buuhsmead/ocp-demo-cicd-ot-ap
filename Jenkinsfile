@@ -37,7 +37,6 @@ node('maven') {
             openshift.withProject() {
                 echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
 
-
             }
         }
     }
@@ -62,11 +61,11 @@ node('maven') {
     }
 
 
-    stage('APP config') {
+    stage('APP Main config') {
         openshift.withCluster() {
 
             openshift.withProject() {
-                openshift.logLevel(3)
+//                openshift.logLevel(3)
 
                 //       sh "oc apply -f is-openjdk18-openshift.yaml "
 //                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
@@ -83,16 +82,18 @@ node('maven') {
 
                 def models = openshift.process( readFile( 'app-main-build-template.yaml') , "-p", "APP_NAME=app-main" )
 
-                echo "Creating this template will instantiate ${models.size()} objects"
+//                echo "Creating this template will instantiate ${models.size()} objects"
 
-                def created = openshift.apply( models )
-                echo "The template instantiated: ${created}"
+                models.each { createOrReplace( it ) }
 
-                def bc = created.narrow('bc')
-
-                def bcObj = bc.object()
-
-                print bcObj
+//                def created = openshift.apply( models )
+//                echo "The template instantiated: ${created}"
+//
+//                def bc = created.narrow('bc')
+//
+//                def bcObj = bc.object()
+//
+//                print bcObj
 
 
             }
@@ -100,6 +101,18 @@ node('maven') {
         }
     }
 
+    stage('APP Front config') {
+        openshift.withCluster() {
+            openshift.withProject() {
+
+                def models = openshift.process( readFile( 'app-main-build-template.yaml') , "-p", "APP_NAME=app-front" )
+
+                models.each { createOrReplace( it ) }
+
+            }
+
+        }
+    }
 
     stage('APP Main Image') {
         //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
@@ -145,10 +158,11 @@ node('maven') {
         openshift.withCluster() {
             openshift.withProject() {
                 echo "Promoting MAIN"
-                openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
+                // TODO do not use BUILD_NUMBER
+                openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
 
                 echo "Promoting FRONT"
-                openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
+                openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
             }
         }
     }
@@ -160,18 +174,16 @@ node('maven') {
         
         openshift.withCluster() {
             openshift.withProject(projectTEST) {
-                openshift.logLevel(3)
+ //               openshift.logLevel(3)
 
 
                 def models = openshift.process( readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main" )
 
-                println models
+//                println models
 
                 models.each { createOrReplace(it) }
 
-//                for ( obj in models) {
-//                    createOrReplace(obj)
-//                }
+               }
 
 
             }
@@ -184,16 +196,12 @@ node('maven') {
 
         openshift.withCluster() {
             openshift.withProject(projectTEST) {
-                openshift.logLevel(3)
+//                openshift.logLevel(3)
 
 
                 def models = openshift.process( readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-front" )
 
-                println models
-
-//                for ( obj in models) {
-//                    createOrReplace(obj)
-//                }
+ //               println models
 
                 models.each { createOrReplace(it) }
             }
