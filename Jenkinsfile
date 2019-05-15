@@ -207,7 +207,11 @@ def createOrReplace(Object obj) {
 
     if (objSelector.exists()) {
         println "The model ${obj.kind} obj ${obj.metadata.name} exists"
-        openshift.replace( obj )
+        if (obj.kind != "PersistentVolumeClaim") {
+            openshift.replace(obj)
+        } else {
+            echo "CAN NOT REPLACE AN EXISTING PersistentVolumeClaim!"
+        }
     } else {
         println "The model ${obj.kind} obj ${obj.metadata.name} does NOT exists"
         openshift.create( obj )
