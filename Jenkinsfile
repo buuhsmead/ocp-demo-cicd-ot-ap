@@ -174,6 +174,8 @@ node('maven') {
 
                 println models
 
+                openshift.replace( models )
+
             }
         }
     }
