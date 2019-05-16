@@ -6,10 +6,14 @@
 // org.csanchez.jenkins.plugins.kubernetes.pod.retention.Always()
 
 // https://jenkins.io/doc/pipeline/steps/kubernetes/#podtemplate-define-a-podtemplate-to-use-in-the-kubernetes-plugin
+// Volume works
+// podRetention not , but why
+
   podTemplate(label: "mypod",
       cloud: "openshift",
       inheritFrom: "maven",
       podRetention: always(),
+      idleMinutes: 10,
       containers: [
           containerTemplate(name: "jnlp",
               image: "registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:latest",
