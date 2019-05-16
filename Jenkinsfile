@@ -9,6 +9,11 @@
 // Volume works
 // podRetention not , but why
 
+
+// Volumes
+// Needs upfront : oc create -f maven-pvc-claim.yaml
+
+
   podTemplate(label: "mypod",
       cloud: "openshift",
       inheritFrom: "maven",
@@ -48,7 +53,8 @@
 
       def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
-      def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
+   //   def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
+      def gradleCmd = "${env.WORKSPACE}/gradlew  " // --debug
 
       echo "Now using project ${projectName} or via namepsace ${env.NAMESPACE}, project base ${projectBase}"
 
