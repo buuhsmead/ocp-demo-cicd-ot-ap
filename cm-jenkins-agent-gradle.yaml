@@ -17,7 +17,7 @@ data:
           <privileged>false</privileged>
           <alwaysPullImage>true</alwaysPullImage>
           <workingDir>/tmp</workingDir>
-          <command></command>
+          <command>cat</command>
           <args>${computer.jnlpmac} ${computer.name}</args>
           <ttyEnabled>false</ttyEnabled>
           <resourceRequestCpu></resourceRequestCpu>

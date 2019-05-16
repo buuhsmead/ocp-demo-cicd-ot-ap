@@ -1,15 +1,22 @@
 #!/usr/bin/env groovy
 
-def label = "mypod-${UUID.randomUUID().toString()}"
+//  podTemplate(label: "mypod",
+//      cloud: "openshift",
+//      inheritFrom: "maven",
+//      podRetention: allways(),
+//      containers: [
+//          containerTemplate(name: "jnlp",
+//              image: "openshift/jenkins-agent-maven-35-centos7:v3.11",
+//              resourceRequestMemory: "512Mi",
+//              resourceLimitMemory: "512Mi",
+//              envVars: [
+//                  envVar(key: "CONTAINER_HEAP_PERCENT", value: "0.25")
+//              ])
+//      ]) {
+//node("mypod") {
 
-podTemplate(label: label, cloud: 'openshift', containers: [
-    containerTemplate(name: 'maven',  image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
-    containerTemplate(name: 'golang', image: 'golang:1.8.0',             ttyEnabled: true, command: 'cat')
-])
 
-
-node(label) {
-
+node("gradle") {
 
     env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
     //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
