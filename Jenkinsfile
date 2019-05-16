@@ -1,9 +1,14 @@
 #!/usr/bin/env groovy
 
+//org.csanchez.jenkins.plugins.kubernetes.pod.retention.PodRetention bla = new org.csanchez.jenkins.plugins.kubernetes.pod.retention.Always()
+
+// always()
+// org.csanchez.jenkins.plugins.kubernetes.pod.retention.Always()
+
   podTemplate(label: "mypod",
       cloud: "openshift",
       inheritFrom: "maven",
-      podRetention: org.csanchez.jenkins.plugins.kubernetes.pod.retention.Always,
+      podRetention: always(),
       containers: [
           containerTemplate(name: "jnlp",
               image: "openshift/jenkins-agent-maven-35-rhel7:v3.11",
