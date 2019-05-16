@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 
-node('maven') {
+//node('maven') {
   env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
   //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
   //        env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
@@ -210,7 +210,7 @@ node('maven') {
     }
   }
 
-}
+
 
 def createOrReplace(Object obj) {
   def objSelector = openshift.selector(obj.kind, obj.metadata.name)
