@@ -17,7 +17,7 @@
   podTemplate(label: "mypod",
       cloud: "openshift",
       inheritFrom: "maven",
-      podRetention: always(),
+  //    podRetention: always(),
       idleMinutes: 10,
       containers: [
           containerTemplate(name: "jnlp",
