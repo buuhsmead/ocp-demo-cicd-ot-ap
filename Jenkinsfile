@@ -11,7 +11,7 @@
       podRetention: always(),
       containers: [
           containerTemplate(name: "jnlp",
-              image: "registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:v3.11",
+              image: "registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:latest",
               resourceRequestMemory: "512Mi",
               resourceLimitMemory: "1Gi",
               resourceLimitCpu: "1000m",
