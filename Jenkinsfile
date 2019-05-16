@@ -68,9 +68,7 @@ node("gradle") {
 
     stage('APP Main Build') {
       dir('app-main') {
-        container('maven') {
           sh "${gradleCmd} bootJar"
-        }
       }
     }
 
