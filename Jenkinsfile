@@ -3,7 +3,7 @@
   podTemplate(label: "mypod",
       cloud: "openshift",
       inheritFrom: "maven",
-      podRetention: "allways",
+      podRetention: "ALWAYS",
       containers: [
           containerTemplate(name: "jnlp",
               image: "openshift/jenkins-agent-maven-35-rhel7:v3.11",
