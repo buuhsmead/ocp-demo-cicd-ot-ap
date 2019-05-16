@@ -5,6 +5,7 @@
 // always()
 // org.csanchez.jenkins.plugins.kubernetes.pod.retention.Always()
 
+// https://jenkins.io/doc/pipeline/steps/kubernetes/#podtemplate-define-a-podtemplate-to-use-in-the-kubernetes-plugin
   podTemplate(label: "mypod",
       cloud: "openshift",
       inheritFrom: "maven",
@@ -19,7 +20,9 @@
               envVars: [
                   envVar(key: "CONTAINER_HEAP_PERCENT", value: "0.50")
               ])
-      ]) {
+      ], volumes: [
+      persistentVolumeClaim(mountPath: '/root/.m2/repository', claimName: 'maven-repo', readOnly: false)
+  ]) {
     node("mypod") {
 
 
@@ -70,6 +73,10 @@
         sh "env"
 
         sh " free -m "
+
+        sh "echo hallo >> /root/.m2/repository/groter "
+
+        sh " ls -la /root/.m2/repository"
       }
 
 
