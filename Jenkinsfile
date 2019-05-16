@@ -45,6 +45,8 @@ node('maven') {
   stage('print out ENV') {
     echo "Printing environment"
     sh "env"
+
+    sh " free -m "
   }
 
 
