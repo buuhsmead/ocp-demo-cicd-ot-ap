@@ -7,7 +7,7 @@
 
 // https://jenkins.io/doc/pipeline/steps/kubernetes/#podtemplate-define-a-podtemplate-to-use-in-the-kubernetes-plugin
 // Volume works
-// podRetention not , but why
+// podRetention not , but why, because 'idleMinutes' was not set
 
 
 // Volumes
@@ -33,9 +33,6 @@
       persistentVolumeClaim(mountPath: '/root/.m2/repository', claimName: 'maven-repo', readOnly: false)
   ]) {
     node("mypod") {
-
-
-//node("gradle") {
 
       env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
       //        env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
@@ -92,6 +89,7 @@
 
       stage('APP Main Build') {
         dir('app-main') {
+          sh "${gradleCmd} helloWorld"
           sh "${gradleCmd} bootJar"
         }
       }

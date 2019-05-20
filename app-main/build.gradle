@@ -39,3 +39,8 @@ dependencies {
     // end::tests[]
 }
 
+task helloWorld {
+    doLast {
+        println 'Hello   docker-registry.default.svc:5000/${System.env.NAMESPACE}/rest-api-bru  world!'
+    }
+}
