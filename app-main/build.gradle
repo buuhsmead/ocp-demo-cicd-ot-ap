@@ -41,7 +41,7 @@ dependencies {
 
 task helloWorld {
     doLast {
-        def image =  "Hello   docker-registry.default.svc:5000/${env.NAMESPACE}/rest-api-bru  world!"
+        def image =  "Hello   docker-registry.default.svc:5000/$System.env.NAMESPACE/rest-api-bru  world!"
         println image
 
     }
