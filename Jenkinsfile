@@ -271,7 +271,7 @@
       stage('Promote to ACC') {
 
               sh """
-                oc image mirror --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${DEST_REGISTRY}/${STAGE3}/${APP_NAME}:latest 
+                oc image mirror --loglevel=8 --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${DEST_REGISTRY}/${STAGE3}/${APP_NAME}:latest 
               """
 
       }
