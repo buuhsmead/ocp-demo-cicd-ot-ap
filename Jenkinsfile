@@ -36,7 +36,7 @@
 
       env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
       env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
-  //    env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
+      //    env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
 
       //    env.APP_NAME = "${env.JOB_NAME}".replaceAll(/-?pipeline-?/, '').replaceAll(/-?${env.NAMESPACE}-?/, '')
 
@@ -50,7 +50,7 @@
 
       def scmAccount = "${env.NAMESPACE}-scm-checkout"
 
-   //   def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
+      //   def gradleCmd = "${env.WORKSPACE}/gradlew -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false " // --debug
       def gradleCmd = "${env.WORKSPACE}/gradlew  " // --debug
 
       echo "Now using project ${projectName} or via namepsace ${env.NAMESPACE}, project base ${projectBase}"
@@ -270,22 +270,21 @@
 
       stage('Promote to ACC') {
 
-        withDockerRegistry(url: "${SRC_REGISTRY}", token: "${TOKEN}") {
-          withDockerRegistry(url: "${SRC_REGISTRY}", token: 'vqUsiObcLu7PuIfv8VEqP1tPAPqa8z0dW47fMNhNJzo')
+        withDockerRegistry(url: "${SRC_REGISTRY}", token: "${env.TOKEN}") {
 
 
-          sh """
-                oc image mirror --loglevel=8 --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${
-            DEST_REGISTRY
-          }/${STAGE3}/${APP_NAME}:latest 
-              """
+          withDockerRegistry(url: "${SRC_REGISTRY}" , token: "${env.TOKEN}") {
+
+
+            sh "oc image mirror --loglevel=8 --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${DEST_REGISTRY}/${STAGE3}/${APP_NAME}:latest"
+
+          }
 
         }
 
       }
 
     }
-
   }
 
 def createOrReplace(Object obj) {
