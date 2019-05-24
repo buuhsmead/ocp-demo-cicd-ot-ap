@@ -8,6 +8,13 @@ oc new-project ${PROJECT_NAME}
 
 oc apply -f secret-scm-checkout.yaml
 
+oc process -f https://raw.githubusercontent.com/redhat-cop/containers-quickstarts/master/jenkins-slaves/.openshift/templates/jenkins-slave-image-mgmt-template.yml | oc apply -f -
+
+oc start-build jenkins-slave-image-mgmt -n ${PROJECT_NAME}
+
+
+
+
 oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 
 ##oc new-build --name=app-main registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift --binary=true

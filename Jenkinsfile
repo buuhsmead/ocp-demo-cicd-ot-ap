@@ -124,7 +124,7 @@
 
 //                echo "Creating this template will instantiate ${models.size()} objects"
 
-            models.each { createOrReplace(it) }
+            models.each { openshift.apply( it ) }
 
 //                def created = openshift.apply( models )
 //                echo "The template instantiated: ${created}"
@@ -147,7 +147,7 @@
 
             def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=app-front")
 
-            models.each { createOrReplace(it) }
+            models.each { openshift.apply( it ) }
 
           }
 
@@ -221,7 +221,7 @@
 
 //                println models
 
-            models.each { createOrReplace(it) }
+            models.each { openshift.apply( it ) }
 
           }
 
@@ -243,7 +243,7 @@
 //
 //            //               println models
 //
-//            models.each { createOrReplace(it) }
+//            models.each { openshift.apply( it ) }
 //          }
 //        }
 //      }
@@ -260,7 +260,7 @@
 
       SRC_REGISTRY = "docker-registry.default.svc:5000"
 
-      DEST_REGISTRY = "docker-registry-default.apps.box.it-speeltuin.nl:443"
+      DEST_REGISTRY = "docker-registry-default.apps.box.it-speeltuin.nl"
 
       APP_NAME = "ppc-main"
 
@@ -268,40 +268,20 @@
       // create secrets with just the TOKEN
 
 
-      stage('Promote to ACC') {
 
-        withDockerRegistry(url: "${SRC_REGISTRY}", token: "${env.TOKEN}") {
-
-
-          withDockerRegistry(url: "${SRC_REGISTRY}" , token: "${env.TOKEN}") {
-
-
-            sh "oc image mirror --loglevel=8 --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${DEST_REGISTRY}/${STAGE3}/${APP_NAME}:latest"
-
-          }
-
-        }
-
-      }
 
     }
   }
 
-def createOrReplace(Object obj) {
-//  def objSelector = openshift.selector(obj.kind, obj.metadata.name)
 
-  openshift.apply(obj)
+node('jenkins-slave-image-mgmt') {
 
 
-//  if (objSelector.exists()) {
-//    println "The model ${obj.kind} obj ${obj.metadata.name} exists"
-//    if (obj.kind != "PersistentVolumeClaim") {
-//      openshift.apply(obj)
-//    } else {
-//      echo "CAN NOT APPLY TO AN EXISTING PersistentVolumeClaim!"
-//    }
-//  } else {
-//    println "The model ${obj.kind} obj ${obj.metadata.name} does NOT exists"
-//    openshift.create(obj)
-//  }
+  stage('Promote to ACC') {
+
+  }
+
+
+
 }
+
