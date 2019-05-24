@@ -248,6 +248,43 @@
         }
       }
 
+
+//      def projectBase = "ariadne-ppc"
+
+      env.STAGE1 = "${projectBase}-dev"
+
+      env.STAGE2 = "${projectBase}-tst"
+
+      env.STAGE3 = "${projectBase}-acc"
+
+
+      SRC_REGISTRY = "docker-registry.default.svc:5000"
+
+      DEST_REGISTRY = "registry.cp.donna.prorail.nl"
+
+      APP_NAME = "ppc-main"
+
+
+      // create secrets with just the TOKEN
+//      - apiVersion: v1
+//        metadata:
+//          name: ${SECRET_NAME}
+//        stringData:
+//          token: "${TOKEN}"
+//        kind: Secret
+//        type: Opaque
+
+
+      stage('Promote to ACC') {
+
+              sh """
+                oc image mirror --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${DEST_REGISTRY}/${STAGE3}/${APP_NAME}:latest 
+              """
+
+      }
+
+
+
     }
 
   }

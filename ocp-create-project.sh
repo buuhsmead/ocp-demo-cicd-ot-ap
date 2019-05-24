@@ -26,3 +26,4 @@ oc new-project "huub-tst"
 
 oc policy add-role-to-user edit system:serviceaccount:huub-cicd:jenkins -n huub-tst
 
+oc project huub-cicd
