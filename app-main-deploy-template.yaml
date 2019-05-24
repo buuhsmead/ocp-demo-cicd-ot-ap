@@ -14,6 +14,7 @@ objects:
         requests:
           storage: ${VOLUME_SIZE}
       storageClassName: ${STORAGE_CLASS}
+
   - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
@@ -21,15 +22,7 @@ objects:
     spec:
       lookupPolicy:
         local: false
-      tags:
-        - from:
-            kind: DockerImage
-            name: ${APP_NAME}:latest
-          generation: 2
-          importPolicy: {}
-          name: latest
-          referencePolicy:
-            type: Source
+
   - apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
     metadata:
