@@ -270,18 +270,19 @@
 
       stage('Promote to ACC') {
 
-          withDockerRegistry(url: "${SRC_REGISTRY}", token: "${TOKEN}") {
-            withDockerRegistry(url: "${SRC_REGISTRY}", token: 'vqUsiObcLu7PuIfv8VEqP1tPAPqa8z0dW47fMNhNJzo')
+        withDockerRegistry(url: "${SRC_REGISTRY}", token: "${TOKEN}") {
+          withDockerRegistry(url: "${SRC_REGISTRY}", token: 'vqUsiObcLu7PuIfv8VEqP1tPAPqa8z0dW47fMNhNJzo')
 
-          }
 
-              sh """
-                oc image mirror --loglevel=8 --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${DEST_REGISTRY}/${STAGE3}/${APP_NAME}:latest 
+          sh """
+                oc image mirror --loglevel=8 --insecure=true ${SRC_REGISTRY}/${STAGE2}/${APP_NAME}:latest ${
+            DEST_REGISTRY
+          }/${STAGE3}/${APP_NAME}:latest 
               """
 
+        }
+
       }
-
-
 
     }
 
