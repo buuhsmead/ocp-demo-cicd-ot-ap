@@ -279,6 +279,10 @@ node('jenkins-slave-image-mgmt') {
 
   stage('Promote to ACC') {
 
+    sh "oc version"
+    sh 'printenv'
+    sh "skopeo --version"
+
   }
 
 
