@@ -290,17 +290,20 @@
   }
 
 def createOrReplace(Object obj) {
-  def objSelector = openshift.selector(obj.kind, obj.metadata.name)
+//  def objSelector = openshift.selector(obj.kind, obj.metadata.name)
 
-  if (objSelector.exists()) {
-    println "The model ${obj.kind} obj ${obj.metadata.name} exists"
-    if (obj.kind != "PersistentVolumeClaim") {
-      openshift.apply(obj)
-    } else {
-      echo "CAN NOT APPLY TO AN EXISTING PersistentVolumeClaim!"
-    }
-  } else {
-    println "The model ${obj.kind} obj ${obj.metadata.name} does NOT exists"
-    openshift.create(obj)
-  }
+  openshift.apply(obj)
+
+
+//  if (objSelector.exists()) {
+//    println "The model ${obj.kind} obj ${obj.metadata.name} exists"
+//    if (obj.kind != "PersistentVolumeClaim") {
+//      openshift.apply(obj)
+//    } else {
+//      echo "CAN NOT APPLY TO AN EXISTING PersistentVolumeClaim!"
+//    }
+//  } else {
+//    println "The model ${obj.kind} obj ${obj.metadata.name} does NOT exists"
+//    openshift.create(obj)
+//  }
 }

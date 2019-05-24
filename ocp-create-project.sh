@@ -6,7 +6,7 @@ GIT_REPO="https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git"
 
 oc new-project ${PROJECT_NAME}
 
-oc create -f secret-scm-checkout.yaml
+oc apply -f secret-scm-checkout.yaml
 
 oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 
