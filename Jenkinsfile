@@ -201,8 +201,8 @@
             // TODO do not use BUILD_NUMBER
             openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
 
-            echo "Promoting FRONT"
-            openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
+//            echo "Promoting FRONT"
+//            openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
           }
         }
       }
@@ -230,23 +230,23 @@
       }
 
 
-      stage('APP FRONT TEST config') {
-
-        echo "Config on project '${projectTEST}'"
-
-        openshift.withCluster() {
-          openshift.withProject(projectTEST) {
-//                openshift.logLevel(3)
-
-
-            def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-front")
-
-            //               println models
-
-            models.each { createOrReplace(it) }
-          }
-        }
-      }
+//      stage('APP FRONT TEST config') {
+//
+//        echo "Config on project '${projectTEST}'"
+//
+//        openshift.withCluster() {
+//          openshift.withProject(projectTEST) {
+////                openshift.logLevel(3)
+//
+//
+//            def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-front")
+//
+//            //               println models
+//
+//            models.each { createOrReplace(it) }
+//          }
+//        }
+//      }
 
 
 //      def projectBase = "ariadne-ppc"
@@ -260,7 +260,7 @@
 
       SRC_REGISTRY = "docker-registry.default.svc:5000"
 
-      DEST_REGISTRY = "registry.cp.donna.prorail.nl"
+      DEST_REGISTRY = "docker-registry-default.apps.box.it-speeltuin.nl:443"
 
       APP_NAME = "ppc-main"
 
