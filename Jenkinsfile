@@ -274,7 +274,7 @@
   }
 
 
-node('jenkins-slave-image-mgmt') {
+node('jenkins-slave-image-mgmt:v3.11') {
 
 
   stage('Promote to ACC') {
