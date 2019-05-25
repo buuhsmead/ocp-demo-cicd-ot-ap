@@ -270,14 +270,15 @@
 
     stage('Move to ACC') {
 
+      withDockerRegistry([url: 'https://docker-registry.default.svc:5000', credentialsId: 'huub-cicd-docker-from-reg']) {
 
-      withDockerRegistry([url: 'https://docker-registry-default.192.168.99.100.nip.io', credentialsId: 'huub-cicd-docker-from-reg']) {
+        withDockerRegistry([url: 'https://docker-registry-default.192.168.99.100.nip.io', credentialsId: 'huub-cicd-docker-from-reg']) {
 
 
-        sh "oc image mirror --loglevel=0 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 docker-registry-default.192.168.99.100.nip.io/huub-acc/app-main:0.1.2-2"
+          sh "oc image mirror --loglevel=0 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 docker-registry-default.192.168.99.100.nip.io/huub-acc/app-main:0.1.2-2"
 
+        }
       }
-
     }
   }
 
