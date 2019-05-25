@@ -271,7 +271,7 @@
 
     stage('Move to ACC') {
 
-      sh "oc image mirror docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 docker-registry-default.192.168.99.100.nip.io/huub-acc/app-main:0.1.2-2"
+      sh "oc image mirror --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 docker-registry-default.192.168.99.100.nip.io/huub-acc/app-main:0.1.2-2"
 
 
     }
