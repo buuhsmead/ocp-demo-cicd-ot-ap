@@ -267,24 +267,26 @@
 
       // create secrets with just the TOKEN
 
+    stage('Move to ACC') {
 
+      sh "oc mirror image docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 docker-registry.default.svc:5000/huub-acc/app-main:0.1.2-2"
 
 
     }
   }
 
-
-node('jenkins-slave-image-mgmt:v3.11') {
-
-
-  stage('Promote to ACC') {
-
-    sh "oc version"
-    sh 'printenv'
-    sh "skopeo --version"
-
-  }
-
+//
+//node('jenkins-slave-image-mgmt') {
+//
+//
+//  stage('Promote to ACC') {
+//
+//    sh "oc version"
+//    sh 'printenv'
+//    sh "skopeo --version"
+//
+//  }
+//
 
 
 }
