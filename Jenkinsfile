@@ -274,10 +274,11 @@
 
       stage ('Create ACC project ') {
         openshift.withCluster('masterbox') {
-          openshift.newProject('huub-acc')
+          openshift.withCredentials('masterbox-credentials') {
+            openshift.newProject('huub-acc')
 
+          }
         }
-
       }
 
     stage('Move to ACC') {
