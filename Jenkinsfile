@@ -279,15 +279,16 @@
     //      openshift.withCluster( 'insecure://master.box.it-speeltuin.nl:8443', 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE' ) {
 
         openshift.withCluster( 'masterbox' ) {
+          openshift.withCredentials('huub-cicd-masterbox-credentials') {
             try {
               openshift.newProject('huub-acc')
 
-          } catch (e) {
-          echo "${e}"
-          echo "Check error.. but it could be that the project already exists... skkiping step"
-        }
+            } catch (e) {
+              echo "${e}"
+              echo "Check error.. but it could be that the project already exists... skkiping step"
+            }
 
-
+          }
 
         }
       }
