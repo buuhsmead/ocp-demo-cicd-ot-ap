@@ -265,8 +265,20 @@
 
 // docker-registry.default.svc:5000
 // docker-registry-default.192.168.99.100.nip.io
+// registry.apps.box.it-speeltuin.nl
 
-      // create secrets with just the TOKEN
+
+      // create secrets with just the !! TOKEN !!
+      // oc create secret generic docker-from-reg --from-literal=username=promoter --from-literal=password=$(oc sa get-token jenkins)
+      // oc label secret docker-from-reg credential.sync.jenkins.openshift.io=true
+
+      stage ('Create ACC project ') {
+        openshift.withCluster('masterbox') {
+          openshift.newProject('huub-acc')
+
+        }
+
+      }
 
     stage('Move to ACC') {
 
