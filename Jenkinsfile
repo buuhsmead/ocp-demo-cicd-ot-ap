@@ -305,6 +305,22 @@
         }
       }
     }
+
+
+      stage('config ACC') {
+        openshift.logLevel(8)
+
+        openshift.withCluster( 'masterbox' ) {
+          openshift.project('huub-acc') {
+
+            def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main")
+
+
+            models.each { openshift.apply( it ) }
+
+          }
+        }
+      }
   }
 
 //
