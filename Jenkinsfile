@@ -278,19 +278,25 @@
 
     //      openshift.withCluster( 'insecure://master.box.it-speeltuin.nl:8443', 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE' ) {
 
-        openshift.withCluster( 'masterbox' ) {
-          openshift.withCredentials('huub-cicd-masterbox-credentials') {
-            try {
-              openshift.newProject('huub-acc')
+//        openshift.withCluster( 'masterbox' ) {
+//          openshift.withCredentials('huub-cicd-masterbox-credentials') {
 
-            } catch (e) {
-              echo "${e}"
-              echo "Check error.. but it could be that the project already exists... skkiping step"
-            }
 
+        env.PROD_API = 'insecure://master.box.it-speeltuin.nl:8443'
+        env.PROD_TOKEN = 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE'
+
+        openshift.withCluster( env.PROD_API, env.PROD_TOKEN ) {
+          try {
+            openshift.newProject('huub-acc')
+
+          } catch (e) {
+            echo "${e}"
+            echo "Check error.. but it could be that the project already exists... skkiping step"
           }
 
         }
+
+
       }
 
     stage('Move to ACC') {
