@@ -274,7 +274,10 @@
 
       stage ('Create ACC project ') {
 
+        openshift.logLevel(8)
+
           openshift.withCluster( 'insecure://master.box.it-speeltuin.nl:8443', 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE' ) {
+
 
             openshift.newProject('huub-acc')
 
