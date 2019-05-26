@@ -273,11 +273,12 @@
       // oc label secret docker-from-reg credential.sync.jenkins.openshift.io=true
 
       stage ('Create ACC project ') {
-        openshift.withCluster('masterbox') {
-          openshift.withCredentials('masterbox-credentials') {
-            openshift.newProject('huub-acc')
 
-          }
+          openshift.withCluster( 'insecure://master.box.it-speeltuin.nl:8443', 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE' ) {
+
+            openshift.newProject('huub-acc') {}
+
+
         }
       }
 
