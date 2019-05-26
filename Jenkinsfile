@@ -273,7 +273,7 @@
       // oc label secret docker-from-reg credential.sync.jenkins.openshift.io=true
 
       stage ('Create ACC project ') {
-        openshift.withCluster(clusterName: 'masterbox', credential: 'masterbox-credentials') {
+        openshift.withCluster([clusterName: 'masterbox', credential: 'masterbox-credentials']) {
           openshift.newProject('huub-acc')
 
         }
