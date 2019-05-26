@@ -311,7 +311,7 @@
         openshift.logLevel(8)
 
         openshift.withCluster( 'masterbox' ) {
-          openshift.project('huub-acc') {
+          openshift.withProject('huub-acc') {
 
             def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main")
 
