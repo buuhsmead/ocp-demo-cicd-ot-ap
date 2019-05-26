@@ -317,7 +317,10 @@
       stage('config ACC') {
         openshift.logLevel(8)
 
-        openshift.withCluster( 'masterbox' ) {
+        env.PROD_API = 'insecure://master.box.it-speeltuin.nl:8443'
+        env.PROD_TOKEN = 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE'
+
+        openshift.withCluster( env.PROD_API, env.PROD_TOKEN ) {
           openshift.withProject('huub-acc') {
 
             def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main")
