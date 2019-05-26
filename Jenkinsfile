@@ -276,7 +276,7 @@
 
           openshift.withCluster( 'insecure://master.box.it-speeltuin.nl:8443', 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE' ) {
 
-            openshift.newProject('huub-acc') {}
+            openshift.newProject('huub-acc')
 
 
         }
