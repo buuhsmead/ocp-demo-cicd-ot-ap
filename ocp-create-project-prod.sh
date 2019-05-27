@@ -10,11 +10,11 @@ PROJECT_PRD=${PROJECT_NAME}-prd
 
 SA_NAME=sa-prod-promoter-reg
 
-oc new-project ${PROJECT_NAME}-acc
+oc new-project ${PROJECT_ACC}
 
 oc create sa ${SA_NAME}
 
-oc policy add-role-to-user edit system:serviceaccount:${PROJECT_ACC}:${SA_NAME}
+oc policy add-role-to-user edit -z sa-prod-promoter-reg
 
 
 oc create secret generic docker-prod-reg --from-literal=username=promoter --from-literal=password=$(oc sa get-token ${SA_NAME})

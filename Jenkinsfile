@@ -318,7 +318,7 @@
           withDockerRegistry([url: env.PROD_REGISTRY , credentialsId: 'huub-cicd-docker-dest-reg']) {
 
           sh """ 
-              oc image mirror --loglevel=8 --insecure=true https://docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 ${env.PROD_REGISTRY}/huub-acc/app-main:0.1.2-2
+              oc image mirror --loglevel=8 --insecure=true https://docker-registry.default.svc:5000/huub-tst/app-main:latest ${env.PROD_REGISTRY}/huub-acc/app-main:latest
                 """
         }
       }
