@@ -328,7 +328,7 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
       echo "Config on project '${projectPRD}'"
 
       openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
-        openshift.withProject(${projectPRD}) {
+        openshift.withProject("${projectPRD}") {
           //               openshift.logLevel(3)
 
 
