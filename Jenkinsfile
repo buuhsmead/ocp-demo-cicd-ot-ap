@@ -307,6 +307,42 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
         }
       }
     }
+
+
+    stage('Promote to PRD') {
+
+      echo "Promoting to PRD - ${projectPRD}"
+
+      openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
+        openshift.withProject(${projectACC}) {
+          echo "Promoting MAIN to PRODUCTION from ACC"
+
+          openshift.tag("${projectACC}/${APP_NAME}:latest", "${projectPRD}/${APP_NAME}:latest")
+        }
+      }
+    }
+
+
+    stage('APP MAIN PRD config') {
+
+      echo "Config on project '${projectPRD}'"
+
+      openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
+        openshift.withProject(${projectPRD}) {
+          //               openshift.logLevel(3)
+
+
+          def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=${APP_NAME}")
+
+
+          models.each { openshift.apply(it) }
+
+        }
+
+
+      }
+    }
+
   }
 
 //
