@@ -26,8 +26,8 @@ oc new-project ${PROJECT_PRD}
 oc policy add-role-to-user edit system:serviceaccount:${PROJECT_ACC}:${SA_NAME} -n ${PROJECT_PRD}
 
 
-echo "Place the displayed value as TOKEN in the file credentials at DEV cluster."
-echo "=== TOKEN ==="
-oc sa get-token sa-prod-promoter-reg
-echo "============="
+sed -i "" '/TOKEN/d' credentials
+
+echo "TOKEN=$(oc sa get-token sa-prod-promoter-reg -n ${PROJECT_ACC})" >> credentials
+
 

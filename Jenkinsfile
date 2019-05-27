@@ -284,10 +284,10 @@ podTemplate(label: "mypod",
 
       withDockerRegistry([url: 'https://docker-registry.default.svc:5000', credentialsId: 'huub-cicd-docker-from-reg']) {
 
-        withDockerRegistry([url: env.PROD_REGISTRY, credentialsId: 'huub-cicd-docker-dest-reg']) {
+        withDockerRegistry([url: "https://${env.PROD_REGISTRY}", credentialsId: 'huub-cicd-docker-dest-reg']) {
 
           sh """ 
-oc image mirror --loglevel=8 --insecure=true https://docker-registry.default.svc:5000/huub-tst/app-main:latest ${env.PROD_REGISTRY}/huub-acc/app-main:latest
+oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:latest ${env.PROD_REGISTRY}/huub-acc/app-main:latest
                 """
         }
       }
