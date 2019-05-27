@@ -6,6 +6,8 @@ GIT_REPO="https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git"
 
 oc new-project ${PROJECT_NAME}
 
+oc process -f secret-dest-cluster-credentials-tmpl.yaml --param-file=credentials | oc create -f-
+
 oc apply -f secret-scm-checkout.yaml
 
 oc process -f https://raw.githubusercontent.com/redhat-cop/containers-quickstarts/master/jenkins-slaves/.openshift/templates/jenkins-slave-image-mgmt-template.yml | oc apply -f -
@@ -32,5 +34,5 @@ oc policy add-role-to-user edit system:serviceaccount:huub-cicd:jenkins -n huub-
 
 oc project huub-cicd
 
-oc process -f secret-dest-cluster-credentials-tmpl.yaml --param-file=credentials | oc create -f-
+
 

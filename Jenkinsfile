@@ -309,11 +309,13 @@
 
     stage('Move to ACC') {
 
+      openshift.logLevel(8)
+
       withDockerRegistry([url: 'https://docker-registry.default.svc:5000', credentialsId: 'huub-cicd-docker-from-reg']) {
 
           withDockerRegistry([url: env.PROD_REGISTRY , credentialsId: 'huub-cicd-docker-dest-reg']) {
 
-          sh "oc image mirror --loglevel=0 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 registry.apps.box.it-speeltuin.nl/huub-acc/app-main:0.1.2-2"
+          sh "oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 registry.apps.box.it-speeltuin.nl/huub-acc/app-main:0.1.2-2"
 
         }
       }
