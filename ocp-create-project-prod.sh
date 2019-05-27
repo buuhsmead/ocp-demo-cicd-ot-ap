@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-# Are you logged in into PROD cluster !
+# Are you logged in into PRD cluster !
+
+# First run this script 'ocp-create-project-prod.sh' on production cluster
+# Then run the script 'ocp-create-project-dev.sh' on dev cluster
+# This is needed because we need the TOKEN from a serviceaccount created on PROD
 
 #set -x
 
@@ -14,7 +18,7 @@ oc new-project ${PROJECT_ACC}
 
 oc create sa ${SA_NAME}
 
-oc policy add-role-to-user edit -z sa-prod-promoter-reg
+oc policy add-role-to-user edit -z ${SA_NAME}
 
 
 oc create secret generic docker-prod-reg --from-literal=username=promoter --from-literal=password=$(oc sa get-token ${SA_NAME})

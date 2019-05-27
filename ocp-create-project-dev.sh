@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# Login at the PROD cluster
-# execute on the PROD cluster 'ocp-create-project-prod.sh'
-# update the file credentials:
-#  TOKEN=$(oc sa get-token sa-prod-promoter-reg)
-#  API_URL=https://master.box.it-speeltuin.nl:8443
-#  REGISTRY_URL=https://registry.apps.box.it-speeltuin.nl
+# Are you logged in into DEV cluster !
+
+# First run this script 'ocp-create-project-prod.sh' on production
+# Then run the script 'ocp-create-project-dev.sh' on dev
+# This is needed because we need the TOKEN from a serviceaccount created on PROD
+
+
 
 
 
@@ -21,8 +22,10 @@ oc apply -f secret-scm-checkout.yaml
 
 oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 
+oc apply -f maven-pvc-claim.yaml
 
 # Have to wait until jenkins sa is created
+sleep 5
 
 oc create secret generic docker-from-reg --from-literal=username=promoter --from-literal=password=$(oc sa get-token jenkins)
 oc label secret docker-from-reg credential.sync.jenkins.openshift.io=true

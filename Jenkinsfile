@@ -38,17 +38,12 @@ podTemplate(label: "mypod",
     env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
     //    env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
 
-    //    env.APP_NAME = "${env.JOB_NAME}".replaceAll(/-?pipeline-?/, '').replaceAll(/-?${env.NAMESPACE}-?/, '')
 
     def projectName = NAMESPACE
     def projectBase = projectName.substring(0, projectName.lastIndexOf('-'))
     def projectTST = projectBase + "-tst"
     def projectACC = projectBase + "-acc"
     def projectPRD = projectBase + "-prd"
-
-    SRC_REGISTRY = "docker-registry.default.svc:5000"
-
-    DEST_REGISTRY = "docker-registry-default.apps.box.it-speeltuin.nl"
 
     def APP_NAME = "app-main"
 
@@ -99,12 +94,6 @@ podTemplate(label: "mypod",
       }
     }
 
-//    stage('APP Front Build') {
-//      dir('app-front') {
-//        sh "${gradleCmd} bootJar"
-//      }
-//    }
-
 
     stage('APP Main config') {
       openshift.withCluster() {
@@ -127,18 +116,8 @@ podTemplate(label: "mypod",
 
           def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=${APP_NAME}")
 
-//                echo "Creating this template will instantiate ${models.size()} objects"
-
           models.each { openshift.apply(it) }
 
-//                def created = openshift.apply( models )
-//                echo "The template instantiated: ${created}"
-//
-//                def bc = created.narrow('bc')
-//
-//                def bcObj = bc.object()
-//
-//                print bcObj
 
 
         }
@@ -146,28 +125,12 @@ podTemplate(label: "mypod",
       }
     }
 
-//    stage('APP Front config') {
-//      openshift.withCluster() {
-//        openshift.withProject() {
-//
-//          def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=app-front")
-//
-//          models.each { openshift.apply(it) }
-//
-//        }
-//
-//      }
-//    }
+
 
     stage('APP Main Image') {
       //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
       sh "oc start-build ${APP_NAME} --from-dir=app-main/build/libs --follow"
     }
-
-//    stage('APP Front Image') {
-//      //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-//      sh "oc start-build app-front --from-dir=app-front/build/libs --follow"
-//    }
 
 
 //    newman = load 'pipeline/newman.groovy'
@@ -177,9 +140,7 @@ podTemplate(label: "mypod",
 //      echo "Not done yet"
 //    }
 
-//    stage('Unit test App Front') {
-//      echo "Not done yet"
-//    }
+
 
     //    stage("Unit Testing & Analysis") {
     //
@@ -234,24 +195,9 @@ podTemplate(label: "mypod",
 
 
 
+    stage('Config for second cluster') {
 
-
-
-
-
-
-// docker-registry.default.svc:5000
-// docker-registry-default.192.168.99.100.nip.io
-// registry.apps.box.it-speeltuin.nl
-
-    stage('Create ACC project ') {
-
-      openshift.logLevel(8)
-
-      //      openshift.withCluster( 'insecure://master.box.it-speeltuin.nl:8443', 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE' ) {
-
-
-      // https://github.com/redhat-cop/container-pipelines/blob/master/multi-cluster-spring-boot/image-mirror-example/.applier/templates/cluster-secret.yml
+      //openshift.logLevel(8)
 
       openshift.withCluster() {
         openshift.withProject() {
@@ -265,22 +211,11 @@ podTemplate(label: "mypod",
         }
       }
 
-//        openshift.withCluster( env.PROD_API, env.PROD_TOKEN ) {
-//          try {
-//            openshift.newProject('huub-acc')
-//
-//          } catch (e) {
-//            echo "${e}"
-//            echo "Check error.. but it could be that the project already exists... skkiping step"
-//          }
-//
-//        }
-
     }
 
     stage('Move to ACC') {
 
-      openshift.logLevel(8)
+      //openshift.logLevel(8)
 
       withDockerRegistry([url: 'https://docker-registry.default.svc:5000', credentialsId: 'huub-cicd-docker-from-reg']) {
 
@@ -295,7 +230,7 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
 
 
     stage('config ACC') {
-      openshift.logLevel(8)
+      //openshift.logLevel(8)
 
       openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
         openshift.withProject('huub-acc') {
@@ -315,7 +250,6 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
 
       openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
         openshift.withProject("${projectACC}") {
-          echo "Promoting MAIN to PRODUCTION from ACC"
 
           openshift.tag("${projectACC}/${APP_NAME}:latest", "${projectPRD}/${APP_NAME}:latest")
         }
@@ -344,20 +278,6 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
     }
 
   }
-
-//
-//node('jenkins-slave-image-mgmt') {
-//
-//
-//  stage('Promote to ACC') {
-//
-//    sh "oc version"
-//    sh 'printenv'
-//    sh "skopeo --version"
-//
-//  }
-//
-
 
 }
 
