@@ -285,25 +285,27 @@
         // https://github.com/redhat-cop/container-pipelines/blob/master/multi-cluster-spring-boot/image-mirror-example/.applier/templates/cluster-secret.yml
 
         openshift.withCluster() {
-          def secretData = openshift.selector('secret/dest-cluster-credentials').object().data
-          def encodedAPI = secretData.api
-          def encodedToken = secretData.token
-          def encodedRegistry = secretData.registry
-          env.PROD_API = sh(script:"set +x; echo ${encodedAPI} | base64 --decode", returnStdout: true).replaceAll(/https?/, 'insecure')
-          env.PROD_TOKEN = sh(script:"set +x; echo ${encodedToken} | base64 --decode", returnStdout: true)
-          env.PROD_REGISTRY = sh(script:"set +x; echo ${encodedRegistry} | base64 --decode", returnStdout: true)
-        }
-
-        openshift.withCluster( env.PROD_API, env.PROD_TOKEN ) {
-          try {
-            openshift.newProject('huub-acc')
-
-          } catch (e) {
-            echo "${e}"
-            echo "Check error.. but it could be that the project already exists... skkiping step"
+          openshift.withProject() {
+            def secretData = openshift.selector('secret/dest-cluster-credentials').object().data
+            def encodedAPI = secretData.api
+            def encodedToken = secretData.token
+            def encodedRegistry = secretData.registry
+            env.PROD_API = sh(script: "set +x; echo ${encodedAPI} | base64 --decode", returnStdout: true).replaceAll(/https?/, 'insecure')
+            env.PROD_TOKEN = sh(script: "set +x; echo ${encodedToken} | base64 --decode", returnStdout: true)
+            env.PROD_REGISTRY = sh(script: "set +x; echo ${encodedRegistry} | base64 --decode", returnStdout: true)
           }
-
         }
+
+//        openshift.withCluster( env.PROD_API, env.PROD_TOKEN ) {
+//          try {
+//            openshift.newProject('huub-acc')
+//
+//          } catch (e) {
+//            echo "${e}"
+//            echo "Check error.. but it could be that the project already exists... skkiping step"
+//          }
+//
+//        }
 
       }
 
@@ -315,8 +317,9 @@
 
           withDockerRegistry([url: env.PROD_REGISTRY , credentialsId: 'huub-cicd-docker-dest-reg']) {
 
-          sh "oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 registry.apps.box.it-speeltuin.nl/huub-acc/app-main:0.1.2-2"
-
+          sh """ 
+              oc image mirror --loglevel=8 --insecure=true https://docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 ${env.PROD_REGISTRY}/huub-acc/app-main:0.1.2-2
+                """
         }
       }
     }

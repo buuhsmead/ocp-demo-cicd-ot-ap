@@ -2,21 +2,32 @@
 
 # Are you logged in into PROD cluster !
 
-set -x
+#set -x
 
 PROJECT_NAME=huub
+PROJECT_ACC=${PROJECT_NAME}-acc
+PROJECT_PRD=${PROJECT_NAME}-prd
+
+SA_NAME=sa-prod-promoter-reg
 
 oc new-project ${PROJECT_NAME}-acc
 
-oc create sa sa-prod-promoter-reg
+oc create sa ${SA_NAME}
 
-oc create secret generic docker-prod-reg --from-literal=username=promoter --from-literal=password=$(oc sa get-token sa-prod-promoter-reg)
+oc policy add-role-to-user edit system:serviceaccount:${PROJECT_ACC}:${SA_NAME}
+
+
+oc create secret generic docker-prod-reg --from-literal=username=promoter --from-literal=password=$(oc sa get-token ${SA_NAME})
 oc label secret docker-prod-reg credential.sync.jenkins.openshift.io=true
 
 
-oc new-project ${PROJECT_NAME}-prd
+oc new-project ${PROJECT_PRD}
 
-oc policy add-role-to-user edit system:serviceaccount:${PROJECT_NAME}-acc:sa-prod-promoter-reg -n ${PROJECT_NAME}-prd
+oc policy add-role-to-user edit system:serviceaccount:${PROJECT_ACC}:${SA_NAME} -n ${PROJECT_PRD}
 
 
+echo "Place the displayed value as TOKEN in the file credentials at DEV cluster."
+echo "=== TOKEN ==="
+oc sa get-token sa-prod-promoter-reg
+echo "============="
 
