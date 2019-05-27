@@ -6,7 +6,7 @@ GIT_REPO="https://github.com/buuhsmead/ocp-demo-cicd-ot-ap.git"
 
 oc new-project ${PROJECT_NAME}
 
-oc process -f secret-dest-cluster-credentials-tmpl.yaml --param-file=credentials | oc create -f-
+oc process -f secret-dest-cluster-credentials-tmpl.yaml --param-file=credentials | oc apply -f-
 
 oc apply -f secret-scm-checkout.yaml
 
