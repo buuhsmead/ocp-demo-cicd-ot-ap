@@ -87,82 +87,82 @@
       }
 
 
-//      stage('APP Main Build') {
-//        dir('app-main') {
-//          sh "${gradleCmd} helloWorld"
-//          sh "${gradleCmd} bootJar"
-//        }
-//      }
+      stage('APP Main Build') {
+        dir('app-main') {
+          sh "${gradleCmd} helloWorld"
+          sh "${gradleCmd} bootJar"
+        }
+      }
 
-//      stage('APP Front Build') {
-//        dir('app-front') {
-//          sh "${gradleCmd} bootJar"
-//        }
-//      }
+      stage('APP Front Build') {
+        dir('app-front') {
+          sh "${gradleCmd} bootJar"
+        }
+      }
 
 
-//      stage('APP Main config') {
-//        openshift.withCluster() {
-//
-//          openshift.withProject() {
-////                openshift.logLevel(3)
-//
-//            //       sh "oc apply -f is-openjdk18-openshift.yaml "
-////                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
-////                openshift.apply(readYaml( file:'is-app-main.yaml'))
-////                openshift.apply(readYaml( file:'is-app-front.yaml'))
-////                openshift.apply(readYaml( file:'svc-app-main.yaml'))
-////                openshift.apply(readYaml( file:'svc-app-front.yaml'))
-////                openshift.apply(readYaml( file:'bc-app-main.yaml'))
-////                openshift.apply(readYaml( file:'bc-app-front.yaml'))
-////                openshift.apply(readYaml( file:'route-app-main.yaml'))
-////                openshift.apply(readYaml( file:'route-app-front.yaml'))
-////                openshift.apply(readYaml( file:'dc-app-main.yaml'))
-////                openshift.apply(readYaml( file:'dc-app-front.yaml'))
-//
-//            def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=app-main")
-//
-////                echo "Creating this template will instantiate ${models.size()} objects"
-//
-//            models.each { openshift.apply( it ) }
-//
-////                def created = openshift.apply( models )
-////                echo "The template instantiated: ${created}"
-////
-////                def bc = created.narrow('bc')
-////
-////                def bcObj = bc.object()
-////
-////                print bcObj
-//
-//
-//          }
-//
-//        }
-//      }
+      stage('APP Main config') {
+        openshift.withCluster() {
 
-//      stage('APP Front config') {
-//        openshift.withCluster() {
-//          openshift.withProject() {
-//
-//            def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=app-front")
-//
-//            models.each { openshift.apply( it ) }
-//
-//          }
-//
-//        }
-//      }
+          openshift.withProject() {
+//                openshift.logLevel(3)
 
-//      stage('APP Main Image') {
-//        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-//        sh "oc start-build app-main --from-dir=app-main/build/libs --follow"
-//      }
+            //       sh "oc apply -f is-openjdk18-openshift.yaml "
+//                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
+//                openshift.apply(readYaml( file:'is-app-main.yaml'))
+//                openshift.apply(readYaml( file:'is-app-front.yaml'))
+//                openshift.apply(readYaml( file:'svc-app-main.yaml'))
+//                openshift.apply(readYaml( file:'svc-app-front.yaml'))
+//                openshift.apply(readYaml( file:'bc-app-main.yaml'))
+//                openshift.apply(readYaml( file:'bc-app-front.yaml'))
+//                openshift.apply(readYaml( file:'route-app-main.yaml'))
+//                openshift.apply(readYaml( file:'route-app-front.yaml'))
+//                openshift.apply(readYaml( file:'dc-app-main.yaml'))
+//                openshift.apply(readYaml( file:'dc-app-front.yaml'))
 
-//      stage('APP Front Image') {
-//        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-//        sh "oc start-build app-front --from-dir=app-front/build/libs --follow"
-//      }
+            def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=app-main")
+
+//                echo "Creating this template will instantiate ${models.size()} objects"
+
+            models.each { openshift.apply( it ) }
+
+//                def created = openshift.apply( models )
+//                echo "The template instantiated: ${created}"
+//
+//                def bc = created.narrow('bc')
+//
+//                def bcObj = bc.object()
+//
+//                print bcObj
+
+
+          }
+
+        }
+      }
+
+      stage('APP Front config') {
+        openshift.withCluster() {
+          openshift.withProject() {
+
+            def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=app-front")
+
+            models.each { openshift.apply( it ) }
+
+          }
+
+        }
+      }
+
+      stage('APP Main Image') {
+        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+        sh "oc start-build app-main --from-dir=app-main/build/libs --follow"
+      }
+
+      stage('APP Front Image') {
+        //sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
+        sh "oc start-build app-front --from-dir=app-front/build/libs --follow"
+      }
 
 
       newman = load 'pipeline/newman.groovy'
@@ -191,61 +191,61 @@
       //        }
       //    }
 
-//
-//      stage('Promote to TEST') {
-//
-//        echo "Promoting to TST - ${projectTEST}"
-//        openshift.withCluster() {
-//          openshift.withProject() {
-//            echo "Promoting MAIN"
-//            // TODO do not use BUILD_NUMBER
-//            openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
-//
-////            echo "Promoting FRONT"
-////            openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
-//          }
-//        }
-//      }
 
-//
-//      stage('APP MAIN TEST config') {
-//
-//        echo "Config on project '${projectTEST}'"
-//
-//        openshift.withCluster() {
-//          openshift.withProject(projectTEST) {
-//            //               openshift.logLevel(3)
-//
-//
-//            def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main")
-//
-//
-//            models.each { openshift.apply( it ) }
-//
-//          }
-//
-//
-//        }
-//      }
+      stage('Promote to TEST') {
+
+        echo "Promoting to TST - ${projectTEST}"
+        openshift.withCluster() {
+          openshift.withProject() {
+            echo "Promoting MAIN"
+            // TODO do not use BUILD_NUMBER
+            openshift.tag("${projectName}/app-main:latest", "${projectTEST}/app-main:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-main:0.1", "${projectTEST}/app-main:latest")
+
+//            echo "Promoting FRONT"
+//            openshift.tag("${projectName}/app-front:latest", "${projectTEST}/app-front:0.1.2-${BUILD_NUMBER}", "${projectTEST}/app-front:0.1", "${projectTEST}/app-front:latest")
+          }
+        }
+      }
 
 
-//      stage('APP FRONT TEST config') {
-//
-//        echo "Config on project '${projectTEST}'"
-//
-//        openshift.withCluster() {
-//          openshift.withProject(projectTEST) {
-////                openshift.logLevel(3)
-//
-//
-//            def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-front")
-//
-//            //               println models
-//
-//            models.each { openshift.apply( it ) }
-//          }
-//        }
-//      }
+      stage('APP MAIN TEST config') {
+
+        echo "Config on project '${projectTEST}'"
+
+        openshift.withCluster() {
+          openshift.withProject(projectTEST) {
+            //               openshift.logLevel(3)
+
+
+            def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main")
+
+
+            models.each { openshift.apply( it ) }
+
+          }
+
+
+        }
+      }
+
+
+      stage('APP FRONT TEST config') {
+
+        echo "Config on project '${projectTEST}'"
+
+        openshift.withCluster() {
+          openshift.withProject(projectTEST) {
+//                openshift.logLevel(3)
+
+
+            def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-front")
+
+            //               println models
+
+            models.each { openshift.apply( it ) }
+          }
+        }
+      }
 
 
 //      def projectBase = "ariadne-ppc"
@@ -278,12 +278,21 @@
 
     //      openshift.withCluster( 'insecure://master.box.it-speeltuin.nl:8443', 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE' ) {
 
-//        openshift.withCluster( 'masterbox' ) {
-//          openshift.withCredentials('huub-cicd-masterbox-credentials') {
 
 
-        env.PROD_API = 'insecure://master.box.it-speeltuin.nl:8443'
-        env.PROD_TOKEN = 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE'
+
+
+        // https://github.com/redhat-cop/container-pipelines/blob/master/multi-cluster-spring-boot/image-mirror-example/.applier/templates/cluster-secret.yml
+
+        openshift.withCluster() {
+          def secretData = openshift.selector('secret/dest-cluster-credentials').object().data
+          def encodedAPI = secretData.api
+          def encodedToken = secretData.token
+          def encodedRegistry = secretData.registry
+          env.PROD_API = sh(script:"set +x; echo ${encodedAPI} | base64 --decode", returnStdout: true).replaceAll(/https?/, 'insecure')
+          env.PROD_TOKEN = sh(script:"set +x; echo ${encodedToken} | base64 --decode", returnStdout: true)
+          env.PROD_REGISTRY = sh(script:"set +x; echo ${encodedRegistry} | base64 --decode", returnStdout: true)
+        }
 
         openshift.withCluster( env.PROD_API, env.PROD_TOKEN ) {
           try {
@@ -296,16 +305,13 @@
 
         }
 
-
       }
 
     stage('Move to ACC') {
 
       withDockerRegistry([url: 'https://docker-registry.default.svc:5000', credentialsId: 'huub-cicd-docker-from-reg']) {
 
-    //    withDockerRegistry([url: 'https://docker-registry-default.192.168.99.100.nip.io', credentialsId: 'huub-cicd-docker-from-reg']) {
-
-          withDockerRegistry([url: 'https://registry.apps.box.it-speeltuin.nl', credentialsId: 'huub-cicd-docker-dest-reg']) {
+          withDockerRegistry([url: env.PROD_REGISTRY , credentialsId: 'huub-cicd-docker-dest-reg']) {
 
           sh "oc image mirror --loglevel=0 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:0.1.2-2 registry.apps.box.it-speeltuin.nl/huub-acc/app-main:0.1.2-2"
 
@@ -317,14 +323,10 @@
       stage('config ACC') {
         openshift.logLevel(8)
 
-        env.PROD_API = 'insecure://master.box.it-speeltuin.nl:8443'
-        env.PROD_TOKEN = 'UG-y8wp3krberCH8BQeHsMORt3JnELRQKvh8KyQLYYE'
-
         openshift.withCluster( env.PROD_API, env.PROD_TOKEN ) {
           openshift.withProject('huub-acc') {
 
             def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main")
-
 
             models.each { openshift.apply( it ) }
 
