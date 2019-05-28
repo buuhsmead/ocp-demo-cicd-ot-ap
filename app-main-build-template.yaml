@@ -73,11 +73,11 @@ parameters:
     name: STORAGE_CLASS
     value: glusterfs-ocs
     required: true
-  - description: valu for github secret
+  - description: value for github secret
     name: GITHUB_SECRET
     from: '[A-Z0-9]{8}'
     generate: expression
-  - description: valu for generic scm secret
+  - description: value for generic scm secret
     name: SCM_GENERIC
     from: '[A-Z0-9]{8}'
     generate: expression
