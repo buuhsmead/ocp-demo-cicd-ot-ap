@@ -10,8 +10,6 @@
 // podRetention not , but why, because 'idleMinutes' was not set
 
 
-// Volumes
-// Needs upfront : oc create -f maven-pvc-claim.yaml
 
 
 podTemplate(label: "mypod",
@@ -27,15 +25,16 @@ podTemplate(label: "mypod",
             resourceLimitCpu: "1000m",
             resourceRequestCpu: "500m",
             envVars: [
-                envVar(key: "CONTAINER_HEAP_PERCENT", value: "0.50")
+                envVar(key: "MYPOD_VALUE", value: "0.50")
             ])
-    ], volumes: [
-    persistentVolumeClaim(mountPath: '/root/.m2/repository', claimName: 'maven-repo', readOnly: false)
-]) {
+    ]) {
   node("mypod") {
 
     env.NAMESPACE = readFile('/var/run/secrets/kubernetes.io/serviceaccount/namespace').trim()
     env.TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
+
+
+    // String ocpApiServer = env.OCP_API_SERVER ? "${env.OCP_API_SERVER}" : "https://openshift.default.svc.cluster.local"
     //    env.OC_CMD = "oc --token=${env.TOKEN} --server=${ocpApiServer} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt --namespace=${env.NAMESPACE}"
 
 
@@ -46,6 +45,8 @@ podTemplate(label: "mypod",
     def projectPRD = projectBase + "-prd"
 
     def APP_NAME = "app-main"
+
+    env.DEV_REGISTRY = 'docker-registry.default.svc:5000'
 
 
     def scmAccount = "${env.NAMESPACE}-scm-checkout"
@@ -81,9 +82,6 @@ podTemplate(label: "mypod",
 
       sh " free -m "
 
-      sh "echo hallo >> /root/.m2/repository/groter "
-
-      sh " ls -la /root/.m2/repository"
     }
 
 
@@ -96,29 +94,14 @@ podTemplate(label: "mypod",
 
 
     stage('APP Main config') {
-      openshift.withCluster() {
 
+      openshift.withCluster() {
         openshift.withProject() {
 //                openshift.logLevel(3)
-
-          //       sh "oc apply -f is-openjdk18-openshift.yaml "
-//                openshift.apply(readYaml( file:'is-openjdk18-openshift.yaml'))
-//                openshift.apply(readYaml( file:'is-app-main.yaml'))
-//                openshift.apply(readYaml( file:'is-app-front.yaml'))
-//                openshift.apply(readYaml( file:'svc-app-main.yaml'))
-//                openshift.apply(readYaml( file:'svc-app-front.yaml'))
-//                openshift.apply(readYaml( file:'bc-app-main.yaml'))
-//                openshift.apply(readYaml( file:'bc-app-front.yaml'))
-//                openshift.apply(readYaml( file:'route-app-main.yaml'))
-//                openshift.apply(readYaml( file:'route-app-front.yaml'))
-//                openshift.apply(readYaml( file:'dc-app-main.yaml'))
-//                openshift.apply(readYaml( file:'dc-app-front.yaml'))
 
           def models = openshift.process(readFile('app-main-build-template.yaml'), "-p", "APP_NAME=${APP_NAME}")
 
           models.each { openshift.apply(it) }
-
-
 
         }
 
@@ -183,13 +166,11 @@ podTemplate(label: "mypod",
 
           def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=${APP_NAME}")
 
-
           models.each { openshift.apply(it) }
 
         }
-
-
       }
+
     }
 
 
@@ -217,12 +198,12 @@ podTemplate(label: "mypod",
 
       //openshift.logLevel(8)
 
-      withDockerRegistry([url: 'https://docker-registry.default.svc:5000', credentialsId: 'huub-cicd-docker-from-reg']) {
+      withDockerRegistry([url: "https://${env.DEV_REGISTRY}", credentialsId: 'huub-cicd-docker-from-reg']) {
 
         withDockerRegistry([url: "https://${env.PROD_REGISTRY}", credentialsId: 'huub-cicd-docker-dest-reg']) {
 
           sh """ 
-oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/huub-tst/app-main:latest ${env.PROD_REGISTRY}/huub-acc/app-main:latest
+oc image mirror --loglevel=8 --insecure=true ${env.DEV_REGISTRY}/${projectTST}/${APP_NAME}:latest ${env.PROD_REGISTRY}/${projectACC}/${APP_NAME}:latest
                 """
         }
       }
@@ -233,9 +214,9 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
       //openshift.logLevel(8)
 
       openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
-        openshift.withProject('huub-acc') {
+        openshift.withProject(projectACC) {
 
-          def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=app-main")
+          def models = openshift.process(readFile("app-main-deploy-template.yaml"), "-p", "APP_NAME=${APP_NAME}")
 
           models.each { openshift.apply(it) }
 
@@ -249,7 +230,7 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
       echo "Promoting to PRD - ${projectPRD}"
 
       openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
-        openshift.withProject("${projectACC}") {
+        openshift.withProject(projectACC) {
 
           openshift.tag("${projectACC}/${APP_NAME}:latest", "${projectPRD}/${APP_NAME}:latest")
         }
@@ -262,7 +243,7 @@ oc image mirror --loglevel=8 --insecure=true docker-registry.default.svc:5000/hu
       echo "Config on project '${projectPRD}'"
 
       openshift.withCluster(env.PROD_API, env.PROD_TOKEN) {
-        openshift.withProject("${projectPRD}") {
+        openshift.withProject(projectPRD) {
           //               openshift.logLevel(3)
 
 

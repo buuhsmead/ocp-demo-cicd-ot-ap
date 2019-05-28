@@ -22,8 +22,6 @@ oc apply -f secret-scm-checkout.yaml
 
 oc new-app ${GIT_REPO} --source-secret='scm-checkout'
 
-oc apply -f maven-pvc-claim.yaml
-
 # Have to wait until jenkins sa is created
 sleep 5
 
