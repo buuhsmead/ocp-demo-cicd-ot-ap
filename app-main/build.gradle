@@ -33,6 +33,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile "io.prometheus:simpleclient_spring_boot:0.0.21"
+    compile "io.prometheus:simpleclient_hotspot:0.0.21"
+    compile "io.prometheus:simpleclient_dropwizard:0.0.21"
     // end::actuator[]
     // tag::tests[]
     testCompile("org.springframework.boot:spring-boot-starter-test")
