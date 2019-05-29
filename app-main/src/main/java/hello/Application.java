@@ -7,13 +7,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+//import org.springframework.metrics.export.prometheus.EnablePrometheusMetrics;
 
-import io.prometheus.client.spring.boot.EnablePrometheusEndpoint;
-import io.prometheus.client.spring.boot.EnableSpringBootMetricsCollector;
+//import io.prometheus.client.EnablePrometheusMetrics;
+//import io.prometheus.client.spring.boot.EnableSpringBootMetricsCollector;
 
 @SpringBootApplication
-@EnablePrometheusEndpoint
-@EnableSpringBootMetricsCollector
 public class Application {
 
     public static void main(String[] args) {
