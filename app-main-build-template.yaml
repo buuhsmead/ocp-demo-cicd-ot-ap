@@ -33,8 +33,9 @@ objects:
       strategy:
         sourceStrategy:
           from:
-            kind: DockerImage
-            name: registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:latest
+            kind: ImageStreamTag
+            name: 'redhat-openjdk18-openshift:1.4'
+            namespace: openshift
         type: Source
       successfulBuildsHistoryLimit: 5
       triggers:
