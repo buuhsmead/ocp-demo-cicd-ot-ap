@@ -112,7 +112,7 @@ podTemplate(label: "mypod",
 
     stage('APP Main Image') {
      // sh "${gradleCmd} jib -Djib.to.image=myregistry/app-main:latest -Djib.from.image=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6-20"
-      sh "oc start-build ${APP_NAME} --from-dir=app-main/build/libs --follow"
+      sh "oc start-build ${APP_NAME} --from-dir=app-main/build/libs --follow --wait"
     }
 
 
